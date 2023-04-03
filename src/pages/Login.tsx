@@ -1,7 +1,7 @@
 import redEclipseLogo from "../images/RedEclipse.webp";
 import Axios from "axios";
 import React from "react";
-import {emailValidation, messageValidation, nameValidation, passwordValidation} from "../utils/inputsValidation";
+import {emailValidation, passwordValidation} from "../utils/inputsValidation";
 
 const Login = () => {
   const [credentials, setCredentials] = React.useState({
