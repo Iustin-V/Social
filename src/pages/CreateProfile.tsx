@@ -247,7 +247,7 @@ export const CreateProfile = () => {
                 <label className="block text-xl font-medium leading-6 text-gray-900">
                   Birthday
                 </label>
-                <div className="mt-2">
+                <div className="mt-2 date-picker">
                   <DatePicker
                     selected={birthdayDate}
                     onChange={(date: Date) => {

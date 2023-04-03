@@ -43,3 +43,11 @@ code {
   justify-content: center;
   padding: 26px 0 0 0;
 }
+
+.date-picker>div>div>input {
+  height: 36px;
+  padding: 8px;
+  background: white;
+  border-radius: 5px;
+  border:1px solid rgba(128, 128, 128, 0.63);
+}
