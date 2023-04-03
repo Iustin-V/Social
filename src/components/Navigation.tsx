@@ -4,10 +4,8 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
+  { name: "Your Feed", href: "", current: true },
+  { name: "Friends", href: "#", current: false },
 ];
 
 function classNames(...classes: any) {
@@ -53,8 +51,8 @@ export const Navigation = () => {
                       className={classNames(
                         item.current
                           ? "dark-red text-white"
-                          : "hover-red text-white hover:text-white",
-                        "rounded-md px-3 py-2 text-sm font-medium"
+                          : "hover-red  hover:text-white",
+                        "rounded-md px-3 py-2 text-sm font-medium text-black bg-white"
                       )}
                       aria-current={item.current ? "page" : undefined}
                     >

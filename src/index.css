@@ -19,10 +19,27 @@ code {
 .red-background {
   background: #d1aea695;
 }
-.dark-red{
+.dark-red {
   background: #a11b21;
-
 }
 .hover-red:hover {
   background: #a11b21;
+}
+
+.feed-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.feed-column-wrapper {
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
+}
+.feed-wrapper {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 26px 0 0 0;
 }

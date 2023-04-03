@@ -1,6 +1,5 @@
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import React from "react";
-import Datepicker from "react-tailwindcss-datepicker";
 export const CreateProfile =()=>{
     document.body.style.background='#d1aea695'
 
