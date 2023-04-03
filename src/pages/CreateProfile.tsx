@@ -1,20 +1,101 @@
 import { UploadImage } from "../tools/UploadImage";
+import { messageValidation, nameValidation } from "../utils/inputsValidation";
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const CreateProfile = () => {
   document.body.style.background = "#d1aea695";
-  const [birthdayDate, setBirthdayDate] = useState(new Date());
+
+  const [birthdayDate, setBirthdayDate] = React.useState(new Date());
   const [image, getImage] = React.useState("");
 
+  const [profileInformations, setProfileInformations] = React.useState({
+    prenume: "",
+    nume: "",
+    descriere: "",
+    data_nasterii: "",
+    oras: "",
+    tara: "",
+    poza_profil: "",
+    poza_cover: "",
+  });
+  const [errorState, setErrorState] = React.useState(false);
+  const [numeError, setNumeError] = React.useState("");
+  const [prenumeError, setPrenumeError] = React.useState("");
+  const [descriereError, setDescriereError] = React.useState("");
+  const [orasError, setOrasError] = React.useState("");
+  const [taraError, setTaraError] = React.useState("");
+  const [pozaProfilError, setPozaProfilError] = React.useState("");
+  const [pozaCoverError, setPozaCoverError] = React.useState("");
+
+  const onChangeHandle = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    if (e.target.id === "prenume") {
+      setPrenumeError(nameValidation(e.target.value));
+      profileInformations.prenume = e.target.value;
+    }
+
+    if (e.target.id === "nume") {
+      setNumeError(nameValidation(e.target.value));
+      profileInformations.nume = e.target.value;
+    }
+    if (e.target.id === "descriere") {
+      setDescriereError(messageValidation(e.target.value));
+      profileInformations.descriere = e.target.value;
+    }
+    if (e.target.id === "oras") {
+      setOrasError(nameValidation(e.target.value));
+      profileInformations.oras = e.target.value;
+    }
+    if (e.target.id === "poza_profil") {
+      setPozaProfilError(messageValidation(e.target.value));
+      profileInformations.poza_profil = e.target.value;
+    }
+    if (e.target.id === "poza_cover") {
+      setPozaCoverError(messageValidation(e.target.value));
+      profileInformations.poza_cover = e.target.value;
+    }
+  };
+  const handleSave = () => {
+    if (
+      numeError === "" &&
+      prenumeError === "" &&
+      orasError === "" &&
+      taraError === "" &&
+      pozaProfilError === "" &&
+      pozaCoverError === "" &&
+      descriereError === ""
+    ) {
+      if (
+        profileInformations.nume !== "" &&
+        profileInformations.prenume !== "" &&
+        profileInformations.descriere !== "" &&
+        profileInformations.data_nasterii !== "" &&
+        profileInformations.oras !== "" &&
+        profileInformations.tara !== "" &&
+        profileInformations.poza_profil !== "" &&
+        profileInformations.poza_cover !== ""
+      ) {
+        setErrorState(false);
+        console.log("bravo coita", profileInformations);
+      } else {
+        setErrorState(true);
+      }
+    } else {
+      setErrorState(true);
+    }
+  };
   return (
     <div className="bg-white mx-auto max-w-5xl py-16 px-2 sm:px-6 lg:px-8">
       <div>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
-            <h1 className="text-4xl font-bold leading-7 text-red-800">
+            <h1 className="text-4xl font-bold text-red-800">
               Create your Profile
             </h1>
             <p className="mt-4 text-base leading-6 text-black">
@@ -33,6 +114,7 @@ export const CreateProfile = () => {
                 <div className="mt-2">
                   <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                     <input
+                      onChange={onChangeHandle}
                       type="text"
                       name="firstname"
                       id="prenume"
@@ -56,6 +138,7 @@ export const CreateProfile = () => {
                       type="text"
                       name="lastname"
                       id="nume"
+                      onChange={onChangeHandle}
                       autoComplete="lastname"
                       className="block px-2 flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                       placeholder=" Last Name"
@@ -73,9 +156,10 @@ export const CreateProfile = () => {
                 </label>
                 <div className="mt-2">
                   <textarea
-                    id="about"
+                    id="descriere"
                     name="about"
                     rows={3}
+                    onChange={onChangeHandle}
                     className="block px-2 w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6"
                     defaultValue={""}
                   />
@@ -93,18 +177,7 @@ export const CreateProfile = () => {
                   Profile Photo
                 </label>
                 <div className="mt-2 flex items-center gap-x-3">
-                  {/*<UserCircleIcon*/}
-                  {/*  className="h-24 w-24 text-gray-300"*/}
-                  {/*  aria-hidden="true"*/}
-                  {/*/>*/}
-                  {/*<button*/}
-                  {/*  type="button"*/}
-                  {/*  onClick={() => UploadImage}*/}
-                  {/*  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"*/}
-                  {/*>*/}
-                  {/*  Upload a photo*/}
-                  {/*</button>*/}
-                  <UploadImage uploadFunction={getImage} />
+                  <UploadImage uploadFunction={onChangeHandle} />
                 </div>
               </div>
 
@@ -115,7 +188,7 @@ export const CreateProfile = () => {
                 >
                   Cover photo
                 </label>
-                    <UploadImage uploadFunction={getImage} cover={true} />
+                <UploadImage uploadFunction={onChangeHandle} cover={true} />
               </div>
             </div>
           </div>
@@ -135,8 +208,11 @@ export const CreateProfile = () => {
                 </label>
                 <div className="mt-2">
                   <select
-                    id="tara"
-                    name="country"
+                    onChange={(e) => {
+                      profileInformations.tara = e.target.value;
+                    }}
+                    id="country"
+                    name="tare"
                     autoComplete="country-name"
                     className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                   >
@@ -157,6 +233,7 @@ export const CreateProfile = () => {
                 </label>
                 <div className="mt-2">
                   <input
+                    onChange={onChangeHandle}
                     type="text"
                     name="city"
                     id="oras"
@@ -167,18 +244,16 @@ export const CreateProfile = () => {
               </div>
 
               <div className="sm:col-span-2">
-                <label
-                  htmlFor="postal-code"
-                  className="block text-xl font-medium leading-6 text-gray-900"
-                >
+                <label className="block text-xl font-medium leading-6 text-gray-900">
                   Birthday
                 </label>
                 <div className="mt-2">
                   <DatePicker
                     selected={birthdayDate}
-                    onChange={(e: any) => {
-                      console.log(e);
-                      return setBirthdayDate(e);
+                    onChange={(date: Date) => {
+                      const dateString = new Date(date).toLocaleDateString();
+                      profileInformations.data_nasterii = dateString;
+                      setBirthdayDate(date);
                     }}
                   />
                 </div>
@@ -186,11 +261,16 @@ export const CreateProfile = () => {
             </div>
           </div>
         </div>
-
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+            <div className={"p-3 h-10"}>
+              {errorState && ( <h2 className={"text-red-500 text-center text-xl md:text-2xl"}>
+                All fields must be completed !{" "}
+              </h2>)}
+            </div>
+        <div className="mt-6 flex items-center justify-center gap-x-6 sm:justify-end">
           <button
             type="submit"
-            className="rounded-md bg-red-800 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="rounded-md bg-red-800 px-10 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            onClick={handleSave}
           >
             Save
           </button>

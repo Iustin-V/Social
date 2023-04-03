@@ -31,7 +31,9 @@ export const UploadImage = (props) => {
     const file = e.target.files[0];
     const base64 = await convertToBase64(file);
     setPostImage({ ...postImage, myFile: base64 });
-    props.uploadFunction(base64);
+    const id=props.cover? "poza_cover":"poza_profil"
+    const localE={target:{id:id,value:base64}}
+    props.uploadFunction(localE);
   };
 
   const handleSubmit = (e) => {
@@ -42,7 +44,7 @@ export const UploadImage = (props) => {
     <>
       <form onSubmit={handleSubmit}>
         <input
-          id="imagine"
+          id={props.cover ? "poza_cover" : "poza_profil"}
           type="file"
           label="Image"
           className="py-5"
