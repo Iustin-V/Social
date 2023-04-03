@@ -1,7 +1,29 @@
 import redEclipseLogo from "../images/RedEclipse.webp";
+import Axios from "axios";
 import React from "react";
 
 const Register = () => {
+  const [credentials, setCredentials] = React.useState({
+    email: "",
+    password: "",
+  });
+
+  const [errorState, setErrorState] = React.useState("");
+  const handleRegister = () => {
+    Axios.post("http://localhost:3002/api/register", {
+      email: credentials.email,
+      parola: credentials.password,
+    })
+      .then((response) => {
+        console.log(response.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const handleChange = (e: any) => {
+    setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
   return (
     <div>
       <div className="bg-white pt-6 sm:pt-8 lg:pt-12">
@@ -33,27 +55,27 @@ const Register = () => {
           <div className="red-background mx-auto max-w-lg rounded-lg border-2 border-red-900">
             <div className="flex flex-col gap-4 p-4 md:p-8">
               <div>
-                <label
-                  className="mb-2 inline-block text-sm text-gray-800 sm:text-base"
-                >
+                <label className="mb-2 inline-block text-sm text-gray-800 sm:text-base">
                   Email
                 </label>
                 <input
+                  id="email"
+                  type="email"
+                  onChange={handleChange}
                   name="email"
-                  type={"email"}
                   className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
                 />
               </div>
 
               <div>
-                <label
-                  className="mb-2 inline-block text-sm text-gray-800 sm:text-base"
-                >
+                <label className="mb-2 inline-block text-sm text-gray-800 sm:text-base">
                   Password
                 </label>
                 <input
+                  id="password"
+                  type="password"
+                  onChange={handleChange}
                   name="password"
-                  type={"password"}
                   className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
                 />
               </div>
@@ -66,13 +88,15 @@ const Register = () => {
                 </label>
                 <input
                   name="password"
-
-                  type={"password"}
+                  type="password"
                   className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
                 />
               </div>
 
-              <button className="block rounded-lg bg-red-900 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-red-700 focus-visible:ring active:bg-gray-600 md:text-base">
+              <button
+                onClick={() => handleRegister()}
+                className="block rounded-lg bg-red-900 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-red-700 focus-visible:ring active:bg-gray-600 md:text-base"
+              >
                 Register
               </button>
             </div>

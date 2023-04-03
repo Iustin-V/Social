@@ -9,28 +9,16 @@ const Login = () => {
   });
 
   const [errorState, setErrorState] = React.useState("");
-  const handleRegister = () => {
-    Axios.post("http://localhost:3002/api/register", {
-      email: "iustinboss@test.ro",
-      parola: "parola",
-    })
-      .then((response) => {
-        console.log(response.data.message);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+
   // React.useEffect(() => {
   //   if (localStorage.token) {
   //     window.location.href = `/acasa`;
   //   }
   // }, []);
-  const handleLogin = (email: string, parola: string) => {
-    console.log(email, parola);
+  const handleLogin = () => {
     Axios.post("http://localhost:3002/api/login", {
-      email: email,
-      parola: parola,
+      email: credentials.email,
+      parola: credentials.password,
     })
       .then((response) => {
         console.log(response.data.message);
@@ -109,7 +97,7 @@ const Login = () => {
 
                   <button
                     onClick={() =>
-                      handleLogin(credentials.email, credentials.password)
+                      handleLogin()
                     }
                     className="block rounded-lg bg-red-900 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-red-700 focus-visible:ring active:bg-gray-600 md:text-base"
                   >
