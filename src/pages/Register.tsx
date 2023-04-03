@@ -20,6 +20,7 @@ export const Register = () => {
     })
       .then((response) => {
         console.log(response.data.message);
+        window.location.href='create-your-profile'
       })
       .catch((error) => {
         console.log(error);
