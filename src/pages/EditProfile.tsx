@@ -4,6 +4,7 @@ import Axios from "axios";
 import React, { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {ConfirmationModal} from "../components/ConfirmationModal";
 
 export const EditProfile = () => {
   document.body.style.background = "#d1aea695";
@@ -133,6 +134,9 @@ export const EditProfile = () => {
       setErrorState(true);
     }
   };
+  const deleteButtonFuction =()=>{
+    return <ConfirmationModal confirmHandle={()=>handleDelete()}/>
+  }
   const handleDelete = () => {
     const token = localStorage.getItem("token");
     Axios.delete("http://localhost:3002/api/delete-account", {
@@ -339,7 +343,7 @@ export const EditProfile = () => {
           <button
             type="submit"
             className="rounded-md bg-red-800 px-10 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={handleDelete}
+            onClick={deleteButtonFuction}
           >
             Delete
           </button>
