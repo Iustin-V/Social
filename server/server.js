@@ -211,6 +211,68 @@ app.post("/api/create-profile", async (req, res) => {
       .json({ message: "Profil created successfully", id: result.insertId });
   });
 });
+app.put("/api/edit-profile", async (req, res) => {
+  try {
+    const {
+      nume,
+      prenume,
+      data_nasterii,
+      oras,
+      tara,
+      poza_profil,
+      poza_cover,
+      descriere,
+    } = req.body;
+
+    const base64PozaProfil = poza_profil.replace(/^data:image\/\w+;base64,/, "");
+    const binaryPozaProfil = Buffer.from(base64PozaProfil, "base64");
+    const base64PozaCover = poza_cover.replace(/^data:image\/\w+;base64,/, "");
+    const binaryPozaCover = Buffer.from(base64PozaCover, "base64");
+
+    const token = req.headers.authorization.split(" ")[1];
+    const options = { expiresIn: "1h" };
+    const secretKey = "secretkey";
+
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    const user_id = decoded.id;
+
+    const updateQuery = `
+      UPDATE profil
+      SET nume = ?, prenume = ?, data_nasterii = ?, oras = ?, tara = ?, poza_profil = ?, poza_cover = ?, descriere = ?
+      WHERE user_id = ?
+    `;
+
+    const values = [
+      nume,
+      prenume,
+      data_nasterii,
+      oras,
+      tara,
+      binaryPozaProfil,
+      binaryPozaCover,
+      descriere,
+      user_id,
+    ];
+
+    db.query(updateQuery, values, (err, result) => {
+      if (err) {
+        console.error(err);
+        res
+            .status(500)
+            .json({ error: "Error updating profil into the database" });
+        return;
+      }
+
+      res
+          .status(200)
+          .json({ message: "Profil updated successfully", id: user_id });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error updating profil into the database" });
+  }
+});
 // set port, listen for requests
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

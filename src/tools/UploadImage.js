@@ -31,8 +31,8 @@ export const UploadImage = (props) => {
     const file = e.target.files[0];
     const base64 = await convertToBase64(file);
     setPostImage({ ...postImage, myFile: base64 });
-    const id=props.cover? "poza_cover":"poza_profil"
-    const localE={target:{id:id,value:base64}}
+    const id = props.cover ? "poza_cover" : "poza_profil";
+    const localE = { target: { id: id, value: base64 } };
     props.uploadFunction(localE);
   };
 
@@ -58,9 +58,13 @@ export const UploadImage = (props) => {
       </form>
       <img
         className={
-          props.cover ? "object-cover h-96 w-full" : "h-24 w-24 text-gray-300 object-cover rounded-full"
+          props.cover
+            ? "object-cover h-96 w-full"
+            : "h-24 w-24 text-gray-300 object-cover rounded-full"
         }
-        src={postImage.myFile.length !== 0 && postImage.myFile}
+        src={
+           ((postImage.myFile.length !== 0 && postImage.myFile) || props.usedImage )
+        }
       />
     </>
   );
