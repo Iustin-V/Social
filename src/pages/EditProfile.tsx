@@ -1,10 +1,10 @@
+import { ConfirmationModal } from "../components/ConfirmationModal";
 import { UploadImage } from "../tools/UploadImage";
 import { messageValidation, nameValidation } from "../utils/inputsValidation";
 import Axios from "axios";
 import React, { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {ConfirmationModal} from "../components/ConfirmationModal";
 
 export const EditProfile = () => {
   document.body.style.background = "#d1aea695";
@@ -134,9 +134,8 @@ export const EditProfile = () => {
       setErrorState(true);
     }
   };
-  const deleteButtonFuction =()=>{
-    return <ConfirmationModal confirmHandle={()=>handleDelete()}/>
-  }
+  const deleteButtonFuction = () => {
+  };
   const handleDelete = () => {
     const token = localStorage.getItem("token");
     Axios.delete("http://localhost:3002/api/delete-account", {
@@ -153,6 +152,7 @@ export const EditProfile = () => {
       });
   };
   return (
+
     <div className="bg-white mx-auto max-w-5xl py-16 px-2 sm:px-6 lg:px-8">
       <div>
         <div className="space-y-12">
@@ -160,6 +160,7 @@ export const EditProfile = () => {
             <h1 className="text-4xl font-bold text-red-800">
               Edit your Profile
             </h1>
+
             <p className="mt-4 text-base leading-6 text-black">
               This information will be displayed publicly so be careful what you
               share.

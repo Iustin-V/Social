@@ -17,19 +17,49 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 // simple route
 
 app.get("/api/posts/all", (req, res) => {
-  db.query("SELECT * FROM postari", (err, result) => {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ error: "Error fetching data from database" });
-      return;
+  db.query(
+    "SELECT postari.id,postari.user_id,continut,data_postarii,imagine,nume,prenume FROM postari,profil WHERE postari.user_id=profil.user_id ",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+        return;
+      }
+      result.forEach((post) => {
+        post.imagine = Buffer.from(post.imagine).toString("base64");
+      });
+      res.setHeader("Content-Type", "application/json");
+      res.json(result);
     }
-    result.forEach((post) => {
-      post.imagine = Buffer.from(post.imagine).toString("base64");
-    });
-    res.setHeader("Content-Type", "application/json");
-    res.json(result);
-  });
+  );
 });
+app.get("/api/your-posts", async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  const user_id = decoded.id;
+  console.log("user_id", user_id);
+  db.query(
+    "SELECT postari.id,postari.user_id,continut,data_postarii,imagine,nume,prenume FROM postari,profil WHERE postari.user_id= ? and postari.user_id=profil.user_id",
+    user_id,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+        return;
+      }
+      result.forEach((post) => {
+        post.imagine = Buffer.from(post.imagine).toString("base64");
+      });
+      res.setHeader("Content-Type", "application/json");
+      res.json(result);
+    }
+  );
+});
+
 app.get("/api/profile", async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
@@ -62,12 +92,12 @@ app.get("/api/profile", async (req, res) => {
   }
 });
 
-app.get("/api/search/:id", (req, res) => {
-  const searchTerm = req.params.id;
-  const query = `%${searchTerm}%`;
+app.get("/api/posts/search", (req, res) => {
+  const searchTerm = `%${req.headers.body}%`;
+
   db.query(
-    "SELECT * FROM anunt WHERE titlu LIKE ? OR descriere LIKE ?",
-    [query, query],
+    "SELECT postari.id,postari.user_id,continut,data_postarii,imagine,nume,prenume FROM postari,profil WHERE postari.user_id=profil.user_id and postari.continut LIKE ? OR profil.nume LIKE ? OR profil.prenume LIKE ? OR CONCAT(profil.nume, ' ', profil.prenume) LIKE ? OR CONCAT(profil.prenume, ' ', profil.nume) LIKE ?",
+    [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
     (err, result) => {
       if (err) {
         console.log(err);

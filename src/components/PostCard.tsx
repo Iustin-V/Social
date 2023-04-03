@@ -3,6 +3,8 @@ interface PostCardInterface {
   content: string;
   date: string;
   imagine: string;
+  nume: string;
+  prenume: string;
 }
 
 export const PostCard = (props: PostCardInterface) => {
@@ -16,6 +18,10 @@ export const PostCard = (props: PostCardInterface) => {
           alt="blog"
         />
         <div className="p-6">
+          <p className="leading-relaxed  text-xl font-bold">
+            {props.nume} {props.prenume}
+          </p>
+
           <p className="leading-relaxed mb-3">{props.content}</p>
           <div className="flex items-center flex-wrap ">
             <a className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0">

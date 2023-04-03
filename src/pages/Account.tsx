@@ -1,5 +1,8 @@
+import { CreatePost } from "../components/CreatePost";
+import { PostCard } from "../components/PostCard";
 import Axios from "axios";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 export const Account = () => {
   const [profilData, setProfilData] = useState({
@@ -15,6 +18,17 @@ export const Account = () => {
     poza_cover: "",
     descriere: "",
   });
+  const [posts, setPosts] = useState([
+    {
+      id: 0,
+      userId: 0,
+      continut: "",
+      data_postarii: "",
+      imagine: "",
+      nume: "",
+      prenume: "",
+    },
+  ]);
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -30,7 +44,32 @@ export const Account = () => {
       .catch((error) => {
         console.error(error);
       });
+    Axios.get("http://localhost:3002/api/your-posts", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        console.log(response.data);
+        setPosts(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
+
+  const postListEven = posts.map((post) => {
+    return (
+      <PostCard
+        userId={post.userId}
+        content={post.continut}
+        date={post.data_postarii}
+        imagine={post.imagine}
+        nume={post.nume}
+        prenume={post.prenume}
+      />
+    );
+  });
   return (
     <>
       <link
@@ -130,8 +169,7 @@ export const Account = () => {
                 </div>
                 <div className="text-center mt-12">
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-                    {profilData.prenume}{" "}
-                    {profilData.nume}
+                    {profilData.prenume} {profilData.nume}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                     <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
@@ -155,6 +193,7 @@ export const Account = () => {
           </div>
         </section>
       </main>
+      <div className="feed-wrapper">{postListEven}</div>
     </>
   );
 };
