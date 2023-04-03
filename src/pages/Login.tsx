@@ -49,7 +49,7 @@ const Login = () => {
 
   return (
     <>
-      {localStorage.token ? (
+      {!localStorage.token ? (
         <div>
           <div className="bg-white pt-6 sm:pt-8 lg:pt-12">
             <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
@@ -121,7 +121,7 @@ const Login = () => {
                   <p className="text-center text-sm text-black">
                     Don't have an account?{" "}
                     <a
-                      href="#"
+                      href="/register"
                       className="text-indigo-500 transition duration-100 hover:text-indigo-600 active:text-indigo-700"
                     >
                       Register
