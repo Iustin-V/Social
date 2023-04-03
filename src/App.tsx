@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import {Register} from "./pages/Register";
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {CreateProfile} from "./pages/CreateProfile";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path={`/`} element={<Feed />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/create-your-profile" element={<CreateProfile />} />
           <Route path="*" element={<Login />} />
         </Routes>
       </BrowserRouter>
