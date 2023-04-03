@@ -224,7 +224,10 @@ app.put("/api/edit-profile", async (req, res) => {
       descriere,
     } = req.body;
 
-    const base64PozaProfil = poza_profil.replace(/^data:image\/\w+;base64,/, "");
+    const base64PozaProfil = poza_profil.replace(
+      /^data:image\/\w+;base64,/,
+      ""
+    );
     const binaryPozaProfil = Buffer.from(base64PozaProfil, "base64");
     const base64PozaCover = poza_cover.replace(/^data:image\/\w+;base64,/, "");
     const binaryPozaCover = Buffer.from(base64PozaCover, "base64");
@@ -259,19 +262,62 @@ app.put("/api/edit-profile", async (req, res) => {
       if (err) {
         console.error(err);
         res
-            .status(500)
-            .json({ error: "Error updating profil into the database" });
+          .status(500)
+          .json({ error: "Error updating profil into the database" });
         return;
       }
 
       res
-          .status(200)
-          .json({ message: "Profil updated successfully", id: user_id });
+        .status(200)
+        .json({ message: "Profil updated successfully", id: user_id });
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error updating profil into the database" });
   }
+});
+
+app.delete("/api/delete-account", (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  jwt.verify(token, secretKey, options, (err, decoded) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Error decoding token" });
+      return;
+    }
+
+    const user_id = decoded.id;
+    db.query("DELETE FROM postari WHERE user_id=?", user_id, (err, result) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: "Error deleting user posts from database" });
+        return;
+      }
+    });
+    db.query("DELETE FROM profil WHERE user_id=?", user_id, (err, result) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: "Error deleting user profile from database" });
+        return;
+      }
+    });
+
+    db.query("DELETE FROM users WHERE id=?", user_id, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error deleting user from database" });
+        return;
+      }
+    });
+    res.status(200).json({ message: "User account deleted successfully" });
+  });
 });
 // set port, listen for requests
 app.listen(PORT, () => {

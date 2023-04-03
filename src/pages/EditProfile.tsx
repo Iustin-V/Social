@@ -133,6 +133,21 @@ export const EditProfile = () => {
       setErrorState(true);
     }
   };
+  const handleDelete = () => {
+    const token = localStorage.getItem("token");
+    Axios.delete("http://localhost:3002/api/delete-account", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        localStorage.removeItem("token");
+        window.location.href = "/register";
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div className="bg-white mx-auto max-w-5xl py-16 px-2 sm:px-6 lg:px-8">
       <div>
@@ -222,7 +237,10 @@ export const EditProfile = () => {
                   Profile Photo
                 </label>
                 <div className="mt-2 flex items-center gap-x-3">
-                  <UploadImage uploadFunction={onChangeHandle} usedImage={`data:image/png;base64,${profileInformations.poza_profil}`}/>
+                  <UploadImage
+                    uploadFunction={onChangeHandle}
+                    usedImage={`data:image/png;base64,${profileInformations.poza_profil}`}
+                  />
                 </div>
               </div>
 
@@ -233,7 +251,11 @@ export const EditProfile = () => {
                 >
                   Cover photo
                 </label>
-                <UploadImage uploadFunction={onChangeHandle} usedImage={`data:image/png;base64,${profileInformations.poza_cover}`} cover={true}  />
+                <UploadImage
+                  uploadFunction={onChangeHandle}
+                  usedImage={`data:image/png;base64,${profileInformations.poza_cover}`}
+                  cover={true}
+                />
               </div>
             </div>
           </div>
@@ -296,8 +318,6 @@ export const EditProfile = () => {
                   />
                 </div>
               </div>
-
-
             </div>
           </div>
         </div>
@@ -308,13 +328,20 @@ export const EditProfile = () => {
             </h2>
           )}
         </div>
-        <div className="mt-6 flex items-center justify-center gap-x-6 sm:justify-end">
+        <div className="mt-6 flex items-center justify-center gap-x-6 sm:justify-between">
           <button
             type="submit"
             className="rounded-md bg-red-800 px-10 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             onClick={handleSave}
           >
             Save
+          </button>{" "}
+          <button
+            type="submit"
+            className="rounded-md bg-red-800 px-10 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            onClick={handleDelete}
+          >
+            Delete
           </button>
         </div>
       </div>

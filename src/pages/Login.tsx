@@ -1,20 +1,19 @@
 import redEclipseLogo from "../images/RedEclipse.webp";
+import { emailValidation, passwordValidation } from "../utils/inputsValidation";
 import Axios from "axios";
 import React from "react";
-import {emailValidation, passwordValidation} from "../utils/inputsValidation";
 
 const Login = () => {
   const [credentials, setCredentials] = React.useState({
     email: "",
     password: "",
-  })
+  });
   const [errorState, setErrorState] = React.useState(false);
   const [emailError, setEmailError] = React.useState("");
   const [passwordError, setPasswordError] = React.useState("");
   const onChangeHandle = (
-      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-
     if (e.target.id === "email") {
       setEmailError(emailValidation(e.target.value));
       credentials.email = e.target.value;
@@ -26,15 +25,9 @@ const Login = () => {
     }
   };
 
-
   React.useEffect(() => {
-    if (
-        emailError === "" && passwordError===""
-    ) {
-      if (
-          credentials.email !== "" &&
-          credentials.password !== ""
-      ) {
+    if (emailError === "" && passwordError === "") {
+      if (credentials.email !== "" && credentials.password !== "") {
         setErrorState(false);
       } else {
         setErrorState(true);
@@ -44,15 +37,14 @@ const Login = () => {
     }
   }, [emailError, passwordError]);
 
-
   // React.useEffect(() => {
   //   if (localStorage.token) {
   //     window.location.href = `/acasa`;
   //   }
   // }, []);
   const handleLogin = () => {
-    if(errorState) {
-      return
+    if (errorState) {
+      return;
     }
     Axios.post("http://localhost:3002/api/login", {
       email: credentials.email,
@@ -61,13 +53,28 @@ const Login = () => {
       .then((response) => {
         console.log(response.data.message);
         localStorage.setItem("token", response.data.token);
-        window.location.href = `/`;
       })
       .catch((error) => {
         setErrorState(true);
       });
-  };
+    setTimeout(() => {
+      const token = localStorage.getItem("token");
 
+      Axios.get("http://localhost:3002/api/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          response.data.length === 0
+            ? (window.location.href = "/create-your-profile")
+            : (window.location.href = "/");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }, 1000);
+  };
 
   return (
     <>
@@ -114,7 +121,11 @@ const Login = () => {
                       name="email"
                       className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 mb-4 transition duration-100 focus:ring"
                     />
-                    {emailError && <p className={"absolute bottom-1 text-red-500"}>{emailError}</p>}
+                    {emailError && (
+                      <p className={"absolute bottom-1 text-red-500"}>
+                        {emailError}
+                      </p>
+                    )}
                   </div>
 
                   <div className="relative pb-8 md:pb-4">
@@ -128,13 +139,17 @@ const Login = () => {
                       name="password"
                       className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 mb-4 transition duration-100 focus:ring"
                     />
-                    {passwordError && <p className={"absolute bottom-0 md:bottom-1 text-red-500"}>{passwordError}</p>}
+                    {passwordError && (
+                      <p
+                        className={"absolute bottom-0 md:bottom-1 text-red-500"}
+                      >
+                        {passwordError}
+                      </p>
+                    )}
                   </div>
 
                   <button
-                    onClick={() =>
-                      handleLogin()
-                    }
+                    onClick={() => handleLogin()}
                     className="block my-3 rounded-lg bg-red-900 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-red-700 focus-visible:ring active:bg-gray-600 md:text-base"
                   >
                     Log in
