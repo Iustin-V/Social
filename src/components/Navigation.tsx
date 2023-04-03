@@ -22,7 +22,7 @@ export const Navigation = () => {
               {/* Mobile menu button*/}
               <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <span className="sr-only">Open main menu</span>
-                {true ? (
+                {false ? (
                   <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
                 ) : (
                   <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
@@ -99,7 +99,7 @@ export const Navigation = () => {
                     <Menu.Item>
                       {({ active }) => (
                         <a
-                          href="#"
+                          href="/account"
                           className={classNames(
                             active ? "bg-gray-100" : "",
                             "block px-4 py-2 text-sm text-gray-700"
@@ -118,7 +118,7 @@ export const Navigation = () => {
                             "block px-4 py-2 text-sm text-gray-700"
                           )}
                         >
-                          Settings
+                          Edit Profile
                         </a>
                       )}
                     </Menu.Item>

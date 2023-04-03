@@ -5,40 +5,17 @@ const cors = require("cors");
 const app = express();
 const PORT = 3002;
 const bcrypt = require("bcrypt");
+
+const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // simple route
-app.get("/api/users", (req, res) => {
-  db.query("SELECT * FROM users", (err, result) => {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ error: "Error fetching data from database" });
-      return;
-    }
-    res.json(result);
-  });
-});
 
-app.get("/api/categories/:id/subcategories", (req, res) => {
-  const categoryId = req.params.id;
-
-  db.query(
-    "SELECT * FROM subcategorie WHERE id_categorie = ?",
-    categoryId,
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        res.status(500).json({ error: "Error fetching data from database" });
-        return;
-      }
-      res.setHeader("Content-Type", "application/json");
-      res.json(result);
-    }
-  );
-});
 app.get("/api/posts/all", (req, res) => {
   db.query("SELECT * FROM postari", (err, result) => {
     if (err) {
@@ -47,11 +24,42 @@ app.get("/api/posts/all", (req, res) => {
       return;
     }
     result.forEach((post) => {
-        post.imagine = Buffer.from(post.imagine).toString("base64");
+      post.imagine = Buffer.from(post.imagine).toString("base64");
     });
     res.setHeader("Content-Type", "application/json");
     res.json(result);
   });
+});
+app.get("/api/profile", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const options = { expiresIn: "1h" };
+    const secretKey = "secretkey";
+
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    console.log("decoded", decoded.id);
+
+    const user_id = decoded.id;
+    db.query("SELECT * FROM profil WHERE user_id=?", user_id, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+        return;
+      }
+      result.forEach((profile) => {
+        profile.poza_profil = Buffer.from(profile.poza_profil).toString(
+          "base64"
+        );
+        profile.poza_cover = Buffer.from(profile.poza_cover).toString("base64");
+      });
+
+      res.json(result);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
 });
 
 app.get("/api/search/:id", (req, res) => {
@@ -93,6 +101,7 @@ app.post("/api/register", (req, res) => {
           res.status(500).json({ error: "Error inserting user into database" });
           return;
         }
+
         res.status(200).json({ message: "User registered successfully" });
       }
     );
@@ -137,23 +146,55 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-app.post("/api/anunt", (req, res) => {
-  const { titlu, descriere, data, id_subcategorie, id_user, imagine } =
-    req.body;
-  const base64Image = imagine.replace(/^data:image\/\w+;base64,/, "");
-  const binaryImage = Buffer.from(base64Image, "base64");
+app.post("/api/create-profile", async (req, res) => {
+  const {
+    nume,
+    prenume,
+    data_nasterii,
+    oras,
+    tara,
+    poza_profil,
+    poza_cover,
+    descriere,
+  } = req.body;
+  const base64PozaProfil = poza_profil.replace(/^data:image\/\w+;base64,/, "");
+  const binaryPozaProfil = Buffer.from(base64PozaProfil, "base64");
+  const base64PozaCover = poza_cover.replace(/^data:image\/\w+;base64,/, "");
+  const binaryPozaCover = Buffer.from(base64PozaCover, "base64");
+
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  console.log("decoded", decoded.id);
+
+  const user_id = decoded.id;
+
   const query = `
-    INSERT INTO anunt (titlu, descriere, data, id_subcategorie, id_user, imagine)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO profil (   nume,
+                          prenume,
+                          data_nasterii,
+                          oras,
+                          tara,
+                          user_id,
+                          poza_profil,
+                          poza_cover,
+                          descriere)
+    VALUES (?, ?, ?, ?, ?, ?,?,?,?)
   `;
 
   const values = [
-    titlu,
+    nume,
+    prenume,
+    data_nasterii,
+    oras,
+    tara,
+    user_id,
+    binaryPozaProfil,
+    binaryPozaCover,
     descriere,
-    data,
-    id_subcategorie,
-    id_user,
-    binaryImage,
   ];
 
   db.query(query, values, (err, result) => {
@@ -161,16 +202,15 @@ app.post("/api/anunt", (req, res) => {
       console.error(err);
       res
         .status(500)
-        .json({ error: "Error inserting anunt into the database" });
+        .json({ error: "Error inserting profil into the database" });
       return;
     }
 
     res
       .status(201)
-      .json({ message: "Anunt created successfully", id: result.insertId });
+      .json({ message: "Profil created successfully", id: result.insertId });
   });
 });
-
 // set port, listen for requests
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

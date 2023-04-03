@@ -1,6 +1,6 @@
 import { UploadImage } from "../tools/UploadImage";
 import { messageValidation, nameValidation } from "../utils/inputsValidation";
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import Axios from "axios";
 import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -82,6 +82,34 @@ export const CreateProfile = () => {
         profileInformations.poza_cover !== ""
       ) {
         setErrorState(false);
+        const token = localStorage.getItem("token");
+
+        Axios.post(
+          "http://localhost:3002/api/create-profile",
+          {
+            nume: profileInformations.nume,
+            prenume: profileInformations.prenume,
+            data_nasterii: profileInformations.data_nasterii,
+            oras: profileInformations.oras,
+            tara: profileInformations.tara,
+            poza_profil: profileInformations.poza_profil,
+            poza_cover: profileInformations.poza_cover,
+            descriere: profileInformations.descriere,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+          .then((response) => {
+            console.log(response.data.message);
+            window.location.href = "/";
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
         console.log("bravo coita", profileInformations);
       } else {
         setErrorState(true);
@@ -261,11 +289,13 @@ export const CreateProfile = () => {
             </div>
           </div>
         </div>
-            <div className={"p-3 h-10"}>
-              {errorState && ( <h2 className={"text-red-500 text-center text-xl md:text-2xl"}>
-                All fields must be completed !{" "}
-              </h2>)}
-            </div>
+        <div className={"p-3 h-10"}>
+          {errorState && (
+            <h2 className={"text-red-500 text-center text-xl md:text-2xl"}>
+              All fields must be completed !{" "}
+            </h2>
+          )}
+        </div>
         <div className="mt-6 flex items-center justify-center gap-x-6 sm:justify-end">
           <button
             type="submit"

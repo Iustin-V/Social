@@ -17,5 +17,8 @@
     "log5": "^2.4.0",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "body-parser": "^1.20.2"
   }
 }

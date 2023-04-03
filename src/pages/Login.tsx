@@ -61,7 +61,7 @@ const Login = () => {
       .then((response) => {
         console.log(response.data.message);
         localStorage.setItem("token", response.data.token);
-        window.location.href = `acasa`;
+        window.location.href = `/`;
       })
       .catch((error) => {
         setErrorState(true);
