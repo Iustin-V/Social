@@ -3,6 +3,7 @@ import { PostCard } from "../components/PostCard";
 import Axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import {Navigation} from "../components/Navigation";
 
 export const Account = () => {
   const [profilData, setProfilData] = useState({
@@ -72,16 +73,15 @@ export const Account = () => {
   });
   return (
     <>
-      <link
-        rel="stylesheet"
-        href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css"
-      />
-      <link
-        rel="stylesheet"
-        href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
-      />
-
       <main className="profile-page">
+        <link
+            rel="stylesheet"
+            href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
+        />
         <section className="relative block h-500-px">
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover profile-cover"

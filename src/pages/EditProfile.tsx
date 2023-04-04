@@ -1,10 +1,10 @@
+import ConfirmationModal from "../components/ConfirmationModal";
 import { UploadImage } from "../tools/UploadImage";
 import { messageValidation, nameValidation } from "../utils/inputsValidation";
 import Axios from "axios";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import ConfirmationModal from "../components/ConfirmationModal";
 
 export const EditProfile = () => {
   document.body.style.background = "#d1aea695";
@@ -46,7 +46,7 @@ export const EditProfile = () => {
   const [taraError, setTaraError] = React.useState("");
   const [pozaProfilError, setPozaProfilError] = React.useState("");
   const [pozaCoverError, setPozaCoverError] = React.useState("");
-  const [openModal, setOpenModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false);
 
   const onChangeHandle = (
     e: React.ChangeEvent<
@@ -126,8 +126,6 @@ export const EditProfile = () => {
           .catch((error) => {
             console.log(error);
           });
-
-        console.log("bravo coita", profileInformations);
       } else {
         setErrorState(true);
       }
@@ -152,7 +150,6 @@ export const EditProfile = () => {
       });
   };
   return (
-
     <div className="bg-white mx-auto max-w-5xl py-16 px-2 sm:px-6 lg:px-8">
       <div>
         <div className="space-y-12">
@@ -337,20 +334,24 @@ export const EditProfile = () => {
           <button
             type="submit"
             className="rounded-md bg-red-800 px-10 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            onClick={() => setOpenModal(true)}
+          >
+            Delete
+          </button>
+          <button
+            type="submit"
+            className="rounded-md bg-red-800 px-10 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             onClick={handleSave}
           >
             Save
           </button>{" "}
-          <button
-            type="submit"
-            className="rounded-md bg-red-800 px-10 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={()=>setOpenModal(true)}
-          >
-            Delete
-          </button>
         </div>
       </div>
-      <ConfirmationModal open={openModal} setOpened={setOpenModal} confirmHandle={handleDelete}/>
+      <ConfirmationModal
+        open={openModal}
+        setOpened={setOpenModal}
+        confirmHandle={handleDelete}
+      />
     </div>
   );
 };
