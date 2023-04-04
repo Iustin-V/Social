@@ -1,10 +1,10 @@
-import { ConfirmationModal } from "../components/ConfirmationModal";
 import { UploadImage } from "../tools/UploadImage";
 import { messageValidation, nameValidation } from "../utils/inputsValidation";
 import Axios from "axios";
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 export const EditProfile = () => {
   document.body.style.background = "#d1aea695";
@@ -46,6 +46,7 @@ export const EditProfile = () => {
   const [taraError, setTaraError] = React.useState("");
   const [pozaProfilError, setPozaProfilError] = React.useState("");
   const [pozaCoverError, setPozaCoverError] = React.useState("");
+  const [openModal, setOpenModal] = useState(false)
 
   const onChangeHandle = (
     e: React.ChangeEvent<
@@ -134,8 +135,7 @@ export const EditProfile = () => {
       setErrorState(true);
     }
   };
-  const deleteButtonFuction = () => {
-  };
+
   const handleDelete = () => {
     const token = localStorage.getItem("token");
     Axios.delete("http://localhost:3002/api/delete-account", {
@@ -344,12 +344,13 @@ export const EditProfile = () => {
           <button
             type="submit"
             className="rounded-md bg-red-800 px-10 py-2 text-xl font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={deleteButtonFuction}
+            onClick={()=>setOpenModal(true)}
           >
             Delete
           </button>
         </div>
       </div>
+      <ConfirmationModal open={openModal} setOpened={setOpenModal} confirmHandle={handleDelete}/>
     </div>
   );
 };

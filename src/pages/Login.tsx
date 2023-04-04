@@ -1,7 +1,8 @@
 import redEclipseLogo from "../images/RedEclipse.webp";
 import { emailValidation, passwordValidation } from "../utils/inputsValidation";
 import Axios from "axios";
-import React from "react";
+import React, {useState} from "react";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 const Login = () => {
   const [credentials, setCredentials] = React.useState({
@@ -75,6 +76,7 @@ const Login = () => {
         });
     }, 1000);
   };
+
 
   return (
     <>
