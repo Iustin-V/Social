@@ -1,5 +1,4 @@
 import { Menu } from "@headlessui/react";
-import { fireEvent } from "@testing-library/react";
 import Axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -8,7 +7,15 @@ export const FriendList = (props: {
   notification?: boolean;
 }) => {
   const [friends, setFriends] = useState([
-    { nume: "", prenume: "", poza_profil: "", user_id1: 0, user_id2: 0 },
+    {
+      id: 0,
+      nume: "",
+      acceptat: "false",
+      prenume: "",
+      poza_profil: "",
+      user_id1: 0,
+      user_id2: 0,
+    },
   ]);
 
   useEffect(() => {
@@ -20,7 +27,7 @@ export const FriendList = (props: {
       },
     })
       .then((response) => {
-        console.log("data_prietenie", response.data);
+        console.log(response.data);
         setFriends(response.data);
       })
       .catch((error) => {
@@ -53,24 +60,26 @@ export const FriendList = (props: {
   });
 
   const friendList = friends.map((friend) => {
-    return (
-      <div
-        className="flex flex-row items-center rounded-3xl gap-2 justify-start bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white "
-        onClick={() => {
-          props.setChatData(friend);
-        }}
-      >
-        <img
-          alt={`${friend.nume}${friend.prenume}_poza_profil`}
-          src={`data:image/png;base64,${friend.poza_profil}`}
-          className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
-        />
-        <div className={"flex flex-row gap-1"}>
-          <div>{friend.nume}</div>
-          <div>{friend.prenume}</div>
+    if (friend.acceptat === "true") {
+      return (
+        <div
+          className="flex flex-row items-center rounded-3xl gap-2 justify-start bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white "
+          onClick={() => {
+            props.setChatData(friend);
+          }}
+        >
+          <img
+            alt={`${friend.nume}${friend.prenume}_poza_profil`}
+            src={`data:image/png;base64,${friend.poza_profil}`}
+            className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
+          />
+          <div className={"flex flex-row gap-1"}>
+            <div>{friend.nume}</div>
+            <div>{friend.prenume}</div>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   });
   // return <div className="flex flex-col fixed h-screen">{friendList}</div>;
   if (props.notification) {

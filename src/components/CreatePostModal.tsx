@@ -7,6 +7,12 @@ export const CreatePostModal = (props: {
   open: boolean;
   setOpened: any;
   confirmHandle: any;
+  isEdit?: boolean;
+  modelData?: {
+    description: string;
+    image: string;
+  };
+  id?: number;
 }) => {
   const [postInfo, setPostInfo] = React.useState({
     description: "",
@@ -42,7 +48,7 @@ export const CreatePostModal = (props: {
           props.confirmHandle();
           props.setOpened(false);
           console.log("merge");
-          window.location.reload()
+          window.location.reload();
         })
         .catch((error) => {
           console.log(error);
@@ -51,10 +57,16 @@ export const CreatePostModal = (props: {
   };
   React.useEffect(() => {
     setErrorState(false);
-    setPostInfo({
-      description: "",
-      image: "",
-    });
+    console.log(props.modelData);
+    if (props.modelData) {
+      console.log("aaaaaaaaa");
+      setPostInfo(props.modelData);
+    } else {
+      setPostInfo({
+        description: "",
+        image: "",
+      });
+    }
   }, [props.open]);
   const onChangeHandle = (
     e: React.ChangeEvent<
@@ -66,6 +78,43 @@ export const CreatePostModal = (props: {
     }
     if (e.target.id === "image") {
       postInfo.image = e.target.value;
+    }
+  };
+
+  const handleEditPost = () => {
+    const token = localStorage.getItem("token");
+
+    console.log("postInfo", postInfo);
+    if (!postInfo.description && !postInfo.image) {
+      setErrorState(true);
+    } else {
+      setErrorState(false);
+      Axios.put(
+        "http://localhost:3002/api/edit-post",
+        {
+          continut: postInfo.description,
+          imagine: postInfo.image || "",
+          id: props.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+        .then((response) => {
+          setPostInfo({
+            description: "",
+            image: "",
+          });
+          props.confirmHandle();
+          props.setOpened(false);
+          console.log("merge");
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
@@ -120,6 +169,7 @@ export const CreatePostModal = (props: {
                             onChange={onChangeHandle}
                             id="description"
                             name="about"
+                            defaultValue={postInfo.description}
                             rows={3}
                             className="block px-2 w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6"
                           />
@@ -135,6 +185,11 @@ export const CreatePostModal = (props: {
                         <UploadImage
                           uploadFunction={onChangeHandle}
                           post={true}
+                          usedImage={
+                            postInfo.image
+                              ? `data:image/png;base64,${postInfo.image}`
+                              : ""
+                          }
                         />
                       </div>
                       <div className={"p-1 h-6"}>
@@ -156,10 +211,10 @@ export const CreatePostModal = (props: {
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-900 sm:ml-3 sm:w-auto"
                     onClick={() => {
-                      handleCreatePost();
+                      props.isEdit ? handleEditPost() : handleCreatePost();
                     }}
                   >
-                    Create
+                    {props.isEdit ? "Edit" : "Create"}
                   </button>
                   <button
                     type="button"

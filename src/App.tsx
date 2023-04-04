@@ -19,7 +19,7 @@ function App() {
       localStorage.removeItem("token");
       window.location.href = "/login";
     }
-  }, [isExpired]);
+  }, []);
 
   return (
     <>
