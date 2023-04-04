@@ -43,8 +43,8 @@ app.get("/api/users/all", async (req, res) => {
 
   const user_id = decoded.id;
   db.query(
-    "SELECT users.id, profil.nume, profil.prenume, profil.poza_profil FROM users JOIN profil ON users.id = profil.user_id WHERE users.id NOT IN ( SELECT user_id1 FROM prieteni WHERE user_id2 = ? AND acceptat = 'true' UNION SELECT user_id2 FROM prieteni WHERE user_id1 = ? AND acceptat = 'true' ) AND users.id <> ?; users.id NOT IN (SELECT CASEWHEN user_id1 = ? THEN user_id2 ELSE user_id1 END AS friend_id FROM friends WHERE user_id1 = ? OR user_id2 = ? ) AND users.id <> ?",
-    [user_id, user_id, user_id],
+    "SELECT users.id, profil.nume, profil.prenume, profil.poza_profil FROM users JOIN profil ON users.id = profil.user_id WHERE users.id NOT IN ( SELECT CASE WHEN user_id1 = ? THEN user_id2 ELSE user_id1 END AS friend_id FROM prieteni WHERE acceptat='false' AND user_id1 = ? OR user_id2 = ? ) AND users.id <> ?",
+    [user_id, user_id, user_id,user_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -52,7 +52,7 @@ app.get("/api/users/all", async (req, res) => {
         return;
       }
       result.forEach((post) => {
-        post.imagine = Buffer.from(post.imagine).toString("base64");
+        post.poza_profil = Buffer.from(post.poza_profil).toString("base64");
       });
       res.setHeader("Content-Type", "application/json");
       res.json(result);

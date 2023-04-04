@@ -100,7 +100,7 @@ export const Feed = () => {
           </div>
           <input
             type="search"
-            className="p-2 pl-9 w-full rounded-2xl border-b-2 border-red-800 bg-gray-50 focus:border-red-900"
+            className="p-2 pl-9 mt-3 w-full rounded-2xl border-b-2 border-red-800 bg-gray-50 focus:border-red-900"
             placeholder={"Search posts"}
             onChange={(e) => setSearchValue(e.target.value)}
             onKeyDown={(e) => handleSearch(e)}
