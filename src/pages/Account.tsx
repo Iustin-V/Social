@@ -18,6 +18,7 @@ export const Account = () => {
     poza_cover: "",
     descriere: "",
   });
+  const [isFriend, setIsFriend] = useState("");
   const [posts, setPosts] = useState([
     {
       id: 0,
@@ -46,6 +47,18 @@ export const Account = () => {
         .then((response) => {
           console.log(response.data);
           setPosts(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      Axios.get(`http://localhost:3002/api/friends/check/${params.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          console.log("fren", response.data);
+          setIsFriend(response.data.status);
         })
         .catch((error) => {
           console.error(error);
@@ -109,25 +122,41 @@ export const Account = () => {
     }
   });
 
-  const handleInviteFriend = (id:number) => {
+  const handleInviteFriend = (id: number) => {
     const token = localStorage.getItem("token");
+
+    if (isFriend === "Friends") {
+      Axios.delete(`http://localhost:3002/api/remove-friend/${params.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
       Axios.post(
-          "http://localhost:3002/api/create-friend",
-          {},{
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Body: id
-            },
-          }
+        "http://localhost:3002/api/create-friend",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Body: id,
+          },
+        }
       )
-          .then((response) => {
-            console.log("merge");
-            window.location.reload();
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        .then((response) => {
+          console.log("merge");
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
+  };
 
   return (
     <>
@@ -189,17 +218,19 @@ export const Account = () => {
                   </div>
                   <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
                     <div className="flex flex-row gap-2 items-center justify-center margin-responsive">
-                      {params.id && (  <button
-                        className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
-                        type="button"
-                        onClick={()=> {
-                          if(params.id) {
-                            handleInviteFriend(Number(params.id))
-                          }
-                        }}
-                      >
-                        Connect
-                      </button>)}
+                      {params.id && (
+                        <button
+                          className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                          type="button"
+                          onClick={() => {
+                            if (params.id) {
+                              handleInviteFriend(Number(params.id));
+                            }
+                          }}
+                        >
+                          {isFriend || "Connect"}
+                        </button>
+                      )}
                       {!params.id && (
                         <button
                           className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"

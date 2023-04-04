@@ -44,7 +44,7 @@ app.get("/api/users/all", async (req, res) => {
   const user_id = decoded.id;
   db.query(
     "SELECT users.id, profil.nume, profil.prenume, profil.poza_profil FROM users JOIN profil ON users.id = profil.user_id WHERE users.id NOT IN ( SELECT CASE WHEN user_id1 = ? THEN user_id2 ELSE user_id1 END AS friend_id FROM prieteni WHERE acceptat='false' AND user_id1 = ? OR user_id2 = ? ) AND users.id <> ?",
-    [user_id, user_id, user_id,user_id],
+    [user_id, user_id, user_id, user_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -338,13 +338,13 @@ app.get("/api/chat/friend", async (req, res) => {
   Promise.all([promise1, promise2])
     .then((results) => {
       const mergedResults = results.flat();
-      const result1=results[0];
-      const result2=results[1];
-      const result={
-        mergedResults:mergedResults,
-        result1:result1,
-        result2:result2,
-      }
+      const result1 = results[0];
+      const result2 = results[1];
+      const result = {
+        mergedResults: mergedResults,
+        result1: result1,
+        result2: result2,
+      };
       res.json(result);
     })
     .catch((err) => {
@@ -404,6 +404,41 @@ app.get("/api/likes/count/:id", (req, res) => {
     const count = result[0].count;
     res.json({ count });
   });
+});
+
+app.get("/api/friends/check/:id", async (req, res) => {
+  try {
+    const friendId = req.params.id;
+    const token = req.headers.authorization.split(" ")[1];
+    const options = { expiresIn: "1h" };
+    const secretKey = "secretkey";
+
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    const userId = decoded.id;
+
+    db.query(
+      "SELECT * FROM prieteni WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)",
+      [userId, friendId, friendId, userId],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: "Error fetching data from database" });
+          return;
+        }
+        if (result.length === 0) {
+          res.json({ status: "Add friend" });
+        } else if (result[0].acceptat === "false") {
+          res.json({ status: "Sent" });
+        } else {
+          res.json({ status: "Friends" });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
 });
 
 app.post("/api/register", (req, res) => {
@@ -576,23 +611,23 @@ app.post("/api/create-friend", async (req, res) => {
   const user_id = decoded.id;
 
   db.query(
-      "INSERT INTO prieteni(user_id1,user_id2,acceptat) VALUES(?,?,?)",
-      [user_id, id_prieten_nou, 'false'],
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          res
-              .status(500)
-              .json({ error: "Error fetching user data from database" });
-          return;
-        }
-        if (result.length === 0) {
-          res.status(401).json({ error: "Invalid credentials" });
-          return;
-        }
-
-        res.status(200).json({ message: "Post created successfully" });
+    "INSERT INTO prieteni(user_id1,user_id2,acceptat) VALUES(?,?,?)",
+    [user_id, id_prieten_nou, "false"],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: "Error fetching user data from database" });
+        return;
       }
+      if (result.length === 0) {
+        res.status(401).json({ error: "Invalid credentials" });
+        return;
+      }
+
+      res.status(200).json({ message: "Post created successfully" });
+    }
   );
 });
 app.post("/api/post/create-comment", async (req, res) => {
@@ -606,23 +641,23 @@ app.post("/api/post/create-comment", async (req, res) => {
   const user_id = decoded.id;
 
   db.query(
-      "INSERT INTO comentarii(user_id,post_id, continut) VALUES(?,?,?)",
-      [user_id, post_id, continut],
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          res
-              .status(500)
-              .json({ error: "Error fetching user data from database" });
-          return;
-        }
-        if (result.length === 0) {
-          res.status(401).json({ error: "Invalid credentials" });
-          return;
-        }
-
-        res.status(200).json({ message: "Post created successfully" });
+    "INSERT INTO comentarii(user_id,post_id, continut) VALUES(?,?,?)",
+    [user_id, post_id, continut],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: "Error fetching user data from database" });
+        return;
       }
+      if (result.length === 0) {
+        res.status(401).json({ error: "Invalid credentials" });
+        return;
+      }
+
+      res.status(200).json({ message: "Post created successfully" });
+    }
   );
 });
 
@@ -893,6 +928,37 @@ app.delete("/api/delete-post", (req, res) => {
     res.status(200).json({ message: "User account deleted successfully" });
   });
 });
+
+app.delete("/api/remove-friend/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const token = req.headers.authorization.split(" ")[1];
+    const options = { expiresIn: "1h" };
+    const secretKey = "secretkey";
+
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    const id = decoded.id;
+
+    db.query(
+        "DELETE FROM prieteni WHERE (user_id1=? AND user_id2=?) OR (user_id1=? AND user_id2=?)",
+        [id, user_id, user_id, id],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(500).json({ error: "Error removing friend" });
+            return;
+          }
+
+          res.status(200).json({ message: "Friend removed successfully" });
+        }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error removing friend" });
+  }
+});
+
 // set port, listen for requests
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
