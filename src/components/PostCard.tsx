@@ -116,7 +116,8 @@ export const PostCard = (props: PostCardInterface) => {
 
           <p className="leading-relaxed mb-3">{props.content}</p>
           <div className="flex items-center flex-wrap ">
-            <a className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0">
+            <a href={`/post/${props.id}`}
+               className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0 hover:text-indigo-900 hover:underline">
               See post
               <svg
                 className="w-4 h-4 ml-2"
