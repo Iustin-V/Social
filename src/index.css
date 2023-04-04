@@ -85,3 +85,12 @@ code {
     transform: translateX(0);
   }
 }
+
+.chat{
+  position: fixed;
+  right: 50px;
+  bottom: 0;
+}
+.chat>iframe{
+  height: 500px !important;
+}

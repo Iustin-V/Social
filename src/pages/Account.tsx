@@ -4,6 +4,8 @@ import Axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+
+
 export const Account = () => {
   const [profilData, setProfilData] = useState({
     id: 0,
@@ -58,6 +60,7 @@ export const Account = () => {
       });
   }, []);
 
+
   const postListEven = posts.map((post) => {
     return (
       <PostCard
@@ -81,7 +84,7 @@ export const Account = () => {
         href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
       />
 
-      <main className="profile-page">
+      <div className="profile-page">
         <section className="relative block h-500-px">
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover profile-cover"
@@ -124,7 +127,7 @@ export const Account = () => {
                       <img
                         alt={`${profilData.nume}${profilData.prenume}_poza_profil`}
                         src={`data:image/png;base64,${profilData.poza_profil}`}
-                        className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
+                        className="shadow-xl rounded-full  h-36 w-36 object-cover align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
                       />
                     </div>
                   </div>
@@ -192,7 +195,7 @@ export const Account = () => {
             </div>
           </div>
         </section>
-      </main>
+      </div>
       <div className="feed-wrapper">{postListEven}</div>
     </>
   );

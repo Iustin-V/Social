@@ -1,4 +1,6 @@
+import { Chat } from "../components/Chat";
 import { CreatePost } from "../components/CreatePost";
+import { FriendList } from "../components/FriendList";
 import { PostCard } from "../components/PostCard";
 import Axios from "axios";
 import { useEffect, useState } from "react";
@@ -16,8 +18,13 @@ export const Feed = () => {
     },
   ]);
   const [searchValue, setSearchValue] = useState("");
+  const [chatData, setChatData] = useState({
+    nume: "",
+    prenume: "",
+    user_id: 0,
+  });
 
-  const handleSearch = (e:any) => {
+  const handleSearch = (e: any) => {
     if (e.key === "Enter" && searchValue) {
       Axios.get("http://localhost:3002/api/posts/search", {
         headers: {
@@ -68,6 +75,8 @@ export const Feed = () => {
   return (
     <>
       <div>
+        {chatData.user_id !== 0 && <Chat chatData={chatData} />}
+        <FriendList setChatData={setChatData} />
         <input
           className="p-5 bg-amber-50"
           onChange={(e) => setSearchValue(e.target.value)}
