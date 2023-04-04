@@ -1,8 +1,8 @@
 import redEclipseLogo from "../images/RedEclipse.webp";
+import backgroundImg from "../images/back5.gif";
 import { emailValidation, passwordValidation } from "../utils/inputsValidation";
 import Axios from "axios";
-import React, {useState} from "react";
-import ConfirmationModal from "../components/ConfirmationModal";
+import React, { useState } from "react";
 
 const Login = () => {
   const [credentials, setCredentials] = React.useState({
@@ -78,33 +78,42 @@ const Login = () => {
   };
 
 
+
   return (
     <>
       {!localStorage.token ? (
-        <div className="flex flex-col items-center justify-center my-20 lg:flex-row">
-          <div className="bg-white pt-6 sm:pt-8 lg:pt-12">
+          <div className={"flex flex-col items-center justify-center p-10 h-full sm:h-screen sm:p-0"}
+               style={{
+                 background: `url(${backgroundImg})`,
+                 backgroundSize: "cover",
+                 backgroundRepeat: "no-repeat",
+               }}>
+        <div
+          className="flex rounded-3xl overflow-hidden shadow-lg shadow-gray-400 flex-col items-center justify-center lg:flex-row"
+        >
+          <div className="shadow-[0px_20px_20px_10px_#00000024] bg-white flex flex-col items-center justify-center h-full bg-opacity-50 pt-6 sm:pt-8 lg:pt-12">
             <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
-              <div className="flex justify-center h-16 mb-6 md:h-32">
+              <div className="flex justify-center relative h-16 md:h-40 md:mx-9">
                 <img
                   src={redEclipseLogo}
                   loading="lazy"
                   alt="Red Eclipse logo"
-                  className="absolute w-64 object-cover object-center mx-auto md:w-96"
+                  className="absolute w-64 object-cover object-center mx-auto md:w-full"
                 />
               </div>
-              <div className=" my-4 md:my-0">
+              <div className=" my-4 md:my-3">
                 <p className="mx-auto max-w-screen-md text-center text-black md:text-lg">
-                  Bun venit pe RedEclipse - locul unde pasiunile, interesele și
-                  ideile tale se întâlnesc cu o comunitate vibrantă și plină de
-                  energie. Fie că ești aici pentru a-ți conecta cu prietenii și
-                  familia, pentru a-ți extinde rețeaua de contacte sau pentru a
-                  explora comunități și culturi noi, suntem încântați să te avem
-                  alături de noi.{" "}
+                  Join the Red Eclipse Net community and connect with people
+                  from around the world, anytime, anywhere. Our platform is
+                  designed to break down barriers and bring people together,
+                  fostering meaningful conversations and enriching experiences.
+                  Experience the power of global connectivity with Red Eclipse
+                  Net..{" "}
                 </p>
               </div>
             </div>
           </div>
-          <div className="bg-white  pb-6 sm:pt-8 lg:pt-12 min-w-[350px] md:min-w-[474px]">
+          <div className="bg-white w-full lg:w-fit  shadow-[0px_20px_20px_10px_#00000024] pb-6 sm:pt-8 bg-opacity-50 lg:pt-12 min-w-[350px] md:min-w-[474px]">
             <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
               <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">
                 Login
@@ -113,7 +122,7 @@ const Login = () => {
               <div className="red-background mx-auto max-w-lg rounded-lg border-2 border-red-900">
                 <div className="flex flex-col p-4 md:p-8">
                   <div className="relative pb-4">
-                    <label className="mb-2 inline-block text-sm text-gray-800 sm:text-base">
+                    <label className="mb-2 inline-block text-sm text-black sm:text-base">
                       Email
                     </label>
                     <input
@@ -131,7 +140,7 @@ const Login = () => {
                   </div>
 
                   <div className="relative pb-8 md:pb-4">
-                    <label className="mb-2 inline-block text-sm text-gray-800 sm:text-base">
+                    <label className="mb-2 inline-block text-sm text-black sm:text-base">
                       Password
                     </label>
                     <input
@@ -172,7 +181,7 @@ const Login = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div></div>
       ) : (
         <></>
       )}
