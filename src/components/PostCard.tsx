@@ -1,7 +1,10 @@
-import React, {useState} from "react";
 import ConfirmationModal from "./ConfirmationModal";
+import Axios from "axios";
+import React, { useState } from "react";
+import { useJwt } from "react-jwt";
 
 interface PostCardInterface {
+  id: number;
   userId: number;
   content: string;
   date: string;
@@ -11,34 +14,59 @@ interface PostCardInterface {
 }
 
 export const PostCard = (props: PostCardInterface) => {
+  const token = localStorage.getItem("token");
+  const { decodedToken, isExpired } = useJwt(token || "");
+  // @ts-ignore
+  const loggedInUserId = decodedToken?.id;
+  console.log(loggedInUserId, props.userId);
 
   const [openModal, setOpenModal] = useState(false);
   const src = "data:image/png;base64," + props.imagine;
+
+  const handleDelete = () => {
+    Axios.delete("http://localhost:3002/api/delete-post", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Body: `${props.id}`,
+      },
+    })
+      .then((response) => {
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="p-4 relative md:w-96">
       <ConfirmationModal
-          open={openModal}
-          setOpened={setOpenModal}
-          confirmHandle={()=>(console.log("ai sters"))}
+        open={openModal}
+        setOpened={setOpenModal}
+        confirmHandle={handleDelete}
       />
-      <button onClick={()=>setOpenModal(true)}
-          className="absolute inset-y-0 top-6 right-6 z-10 hover:bg-red-800 hover:text-white h-fit text-sm flex bg-red-50 rounded-lg items-center p-1 ">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          className="w-6 h-6"
+      {loggedInUserId === props.userId && (
+        <button
+          onClick={() => setOpenModal(true)}
+          className="absolute inset-y-0 top-6 right-6 z-10 hover:bg-red-800 hover:text-white h-fit text-sm flex bg-red-50 rounded-lg items-center p-1 "
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Delete
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+            />
+          </svg>
+          Delete
+        </button>
+      )}
       <div className="h-full relative  border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
         <img
           className=" w-full object-cover object-center"

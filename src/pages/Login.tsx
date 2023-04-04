@@ -9,6 +9,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+
   const [errorState, setErrorState] = React.useState(false);
   const [emailError, setEmailError] = React.useState("");
   const [passwordError, setPasswordError] = React.useState("");
@@ -47,6 +48,9 @@ const Login = () => {
     if (errorState) {
       return;
     }
+
+
+
     Axios.post("http://localhost:3002/api/login", {
       email: credentials.email,
       parola: credentials.password,
@@ -160,7 +164,7 @@ const Login = () => {
                   </div>
 
                   <button
-                    onClick={() => handleLogin()}
+                    onClick={() => handleLogin}
                     className="block my-3 rounded-lg bg-red-900 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-red-700 focus-visible:ring active:bg-gray-600 md:text-base"
                   >
                     Log in

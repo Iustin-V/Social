@@ -64,7 +64,9 @@ export const Account = () => {
   const postListEven = posts.map((post) => {
     return (
       <PostCard
-        userId={post.userId}
+          id={post.id}
+
+          userId={post.userId}
         content={post.continut}
         date={post.data_postarii}
         imagine={post.imagine}

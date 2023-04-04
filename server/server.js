@@ -167,59 +167,58 @@ app.get("/api/chat/current-user", async (req, res) => {
 });
 
 app.get("/api/chat/friend", async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
 
-    const token = req.headers.authorization.split(" ")[1];
-    const options = {expiresIn: "1h"};
-    const secretKey = "secretkey";
+  const decoded = await jwt.verify(token, secretKey, options);
 
-    const decoded = await jwt.verify(token, secretKey, options);
+  const user_id = decoded.id;
 
-    const user_id = decoded.id;
-
-    const promise1 = new Promise((resolve, reject) => {
-      db.query(
-          "SELECT DISTINCT p1.user_id1 AS user_id, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id1 = p2.user_id WHERE p1.user_id2 = ?",
-          user_id,
-          (err, result) => {
-            if (err) {
-              reject(err);
-            } else {
-              result.forEach((user) => {
-                user.poza_profil = Buffer.from(user.poza_profil).toString("base64");
-              });
-              resolve(result);
-            }
-          }
-      );
-    });
-
-    const promise2 = new Promise((resolve, reject) => {
-      db.query(
-          "SELECT DISTINCT p1.user_id2 AS user_id, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id2 = p2.user_id WHERE p1.user_id1 = ?",
-          user_id,
-          (err, result) => {
-            if (err) {
-              reject(err);
-            } else {
-              result.forEach((user) => {
-                user.poza_profil = Buffer.from(user.poza_profil).toString("base64");
-              });
-              resolve(result);
-            }
-          }
-      );
-    });
-
-    Promise.all([promise1, promise2])
-        .then((results) => {
-          const mergedResults = results.flat();
-          res.json(mergedResults);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({error: "Error fetching data from database"});
-        });
+  const promise1 = new Promise((resolve, reject) => {
+    db.query(
+      "SELECT DISTINCT p1.user_id1 AS user_id, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id1 = p2.user_id WHERE p1.user_id2 = ?",
+      user_id,
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          result.forEach((user) => {
+            user.poza_profil = Buffer.from(user.poza_profil).toString("base64");
+          });
+          resolve(result);
+        }
+      }
+    );
   });
+
+  const promise2 = new Promise((resolve, reject) => {
+    db.query(
+      "SELECT DISTINCT p1.user_id2 AS user_id, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id2 = p2.user_id WHERE p1.user_id1 = ?",
+      user_id,
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          result.forEach((user) => {
+            user.poza_profil = Buffer.from(user.poza_profil).toString("base64");
+          });
+          resolve(result);
+        }
+      }
+    );
+  });
+
+  Promise.all([promise1, promise2])
+    .then((results) => {
+      const mergedResults = results.flat();
+      res.json(mergedResults);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: "Error fetching data from database" });
+    });
+});
 
 app.get("/api/posts/search", (req, res) => {
   const searchTerm = `%${req.headers.body}%`;
@@ -476,6 +475,39 @@ app.delete("/api/delete-account", (req, res) => {
         return;
       }
     });
+    res.status(200).json({ message: "User account deleted successfully" });
+  });
+});
+
+app.delete("/api/delete-post", (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const postId= req.headers.body;
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  jwt.verify(token, secretKey, options, (err, decoded) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Error decoding token" });
+      return;
+    }
+
+    const user_id = decoded.id;
+
+    db.query(
+      "DELETE FROM postari WHERE id=? and user_id=?",
+      [postId, user_id],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(500)
+            .json({ error: "Error deleting user posts from database" });
+          return;
+        }
+      }
+    );
+
     res.status(200).json({ message: "User account deleted successfully" });
   });
 });
