@@ -19,7 +19,7 @@ code {
 }
 
 .red-background {
-  background: #d1aea695;
+  background: #e3bbb2;
 }
 .dark-red {
   background: #a11b21;
@@ -44,7 +44,7 @@ code {
   width: 100%;
   align-items: center;
   justify-content: center;
-  padding: 16px 0 0 0;
+  padding: 80px 0 0 0;
 }
 
 .date-picker>div>div>input {
@@ -100,18 +100,34 @@ code {
   margin-top: 128px;
 }
 
-  @media (min-width: 1024px) {
-    .margin-responsive {
-      margin-top: 0px;
-    }
+@media (min-width: 1024px) {
+  .margin-responsive {
+    margin-top: 0px;
   }
 
-
+}
 .chat{
   position: fixed;
   right: 50px;
   bottom: 0;
+  z-index: 40;
 }
 .chat>iframe{
   height: 500px !important;
+}
+.sidebar{
+  height: calc(100vh - 64px);
+}
+
+@media (max-width: 1220px) {
+  .sidebar {
+    display: none !important;
+  }
+
+}
+@media (max-width: 1380px) {
+  .chat {
+    display: none !important;
+  }
+
 }
