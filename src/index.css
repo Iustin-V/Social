@@ -100,9 +100,12 @@ code {
   margin-top: 128px;
 }
 
+@media (min-width: 1024px) {
+  .margin-responsive {
+    margin-top: 0px;
+  }
 
-
-
+}
 .chat{
   position: fixed;
   right: 50px;
