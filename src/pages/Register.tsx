@@ -80,8 +80,8 @@ export const Register = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="flex rounded-3xl overflow-hidden shadow-lg shadow-gray-400 flex-col items-center justify-center lg:flex-row">
-        <div className="flex flex-col justify-center bg-white bg-opacity-50 h-full pt-6 sm:pt-8 lg:pt-12">
+      <div className="flex rounded-3xl animated-enter overflow-hidden shadow-lg shadow-gray-400 flex-col items-center justify-center lg:flex-row">
+        <div className="flex  flex-col justify-center bg-white bg-opacity-50 h-full pt-6 sm:pt-8 lg:pt-12">
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
             <div className="flex justify-center relative h-16 md:h-40 md:mx-9">
               <img
@@ -93,10 +93,10 @@ export const Register = () => {
             </div>
             <div className=" my-4 md:my-0">
               <p className="mx-auto max-w-screen-md text-center text-black md:text-lg">
-                Welcome to RedEclipse! We are excited to have you with us and
+                Welcome to RedEclipseNET! We are excited to have you with us and
                 offer you an unforgettable social experience. Register now to
                 join our growing community and start your adventure on
-                RedEclipse.
+                RedEclipseNET.
               </p>
             </div>
           </div>
@@ -107,7 +107,7 @@ export const Register = () => {
               Register
             </h2>
 
-            <div className="red-background mx-auto max-w-lg rounded-lg border-2 border-red-900">
+            <div className="red-background animated-enter-right mx-auto max-w-lg rounded-lg border-2 border-red-900">
               <div className="flex flex-col p-4 md:p-8">
                 <div className="relative pb-4">
                   <label className="mb-2 inline-block text-sm text-black sm:text-base">

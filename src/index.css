@@ -53,3 +53,35 @@ code {
   border-radius: 5px;
   border:1px solid rgba(128, 128, 128, 0.63);
 }
+
+.animated-enter{
+  animation: 1s ease-out 0s 1 slideInFromTop;
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-150%);
+  }
+  80%{
+    transform: translateY(10%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animated-enter-right{
+  animation: 1s ease-out 0s 1 slideInFromRight;
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(150%);
+  }
+  80%{
+    transform: translateX(-10%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

@@ -89,7 +89,7 @@ const Login = () => {
                  backgroundRepeat: "no-repeat",
                }}>
         <div
-          className="flex rounded-3xl overflow-hidden shadow-lg shadow-gray-400 flex-col items-center justify-center lg:flex-row"
+          className="flex rounded-3xl animated-enter overflow-hidden shadow-lg shadow-gray-400 flex-col items-center justify-center lg:flex-row"
         >
           <div className=" bg-white flex flex-col items-center justify-center h-full bg-opacity-50 pt-6 sm:pt-8 lg:pt-12">
             <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
@@ -119,7 +119,7 @@ const Login = () => {
                 Login
               </h2>
 
-              <div className="red-background mx-auto max-w-lg rounded-lg border-2 border-red-900">
+              <div className="red-background animated-enter-right mx-auto max-w-lg rounded-lg border-2 border-red-900">
                 <div className="flex flex-col p-4 md:p-8">
                   <div className="relative pb-4">
                     <label className="mb-2 inline-block text-sm text-black sm:text-base">
