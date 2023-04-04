@@ -508,10 +508,10 @@ app.get("/api/user-stats", async (req, res) => {
     res.status(500).json({ error: "Error signing token" });
   }
 });
+
 app.get("/api/user-stats/:id", async (req, res) => {
   try {
     const user_id = req.params.id;
-
 
     const promise1 = new Promise((resolve, reject) => {
       db.query(
@@ -568,6 +568,56 @@ app.get("/api/user-stats/:id", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Error signing token" });
+  }
+});
+
+app.get("/api/conversations/:user_id1", async (req, res) => {
+  const user_id1 = req.params.user_id1;
+
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  const user_id2 = decoded.id;
+
+  try {
+    db.query(
+      "SELECT * FROM conversatie WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id2=? AND user_id1 = ?)LIMIT 1",
+      [user_id1, user_id2, user_id2, user_id1],
+      (err, conversation) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: "Error fetching data from database" });
+          return;
+        }
+        const conversation_id = conversation[0].id;
+
+        db.query(
+          "SELECT mesaje.*, profil.nume, profil.prenume, profil.poza_profil FROM mesaje JOIN profil ON mesaje.sender_id = profil.user_id WHERE mesaje.chat_id = ? ",
+          conversation_id,
+          (err, messages) => {
+            if (err) {
+              console.log(err);
+              res
+                .status(500)
+                .json({ error: "Error fetching data from database" });
+              return;
+            }
+              messages.forEach((post) => {
+                  post.poza_profil = Buffer.from(post.poza_profil).toString("base64");
+              });
+
+
+            res.json({ conversation: conversation[0], messages });
+          }
+        );
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error fetching data from database" });
   }
 });
 
@@ -818,6 +868,74 @@ app.post("/api/like-post", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Error adding like to database" });
+  }
+});
+app.post("/api/conversations", async (req, res) => {
+  const { user_id1 } = req.body;
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  const user_id2 = decoded.id;
+  // Verificăm dacă există deja o conversație între cei doi utilizatori
+  db.query(
+    "SELECT * FROM conversatie WHERE (user_id2 = ? AND user_id1 = ?) OR (user_id1 = ? AND user_id2 = ?)",
+    [user_id1, user_id2, user_id2, user_id1],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+        return;
+      }
+
+      // Dacă există deja o conversație, returnăm un mesaj corespunzător
+      if (result.length > 0) {
+        res.status(409).json({ message: "Conversația există deja" });
+        return;
+      }
+
+      // Dacă nu există o conversație, creăm una nouă
+      db.query(
+        "INSERT INTO conversatie (user_id1, user_id2) VALUES (?, ?)",
+        [user_id1, user_id2],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            res
+              .status(500)
+              .json({ error: "Error inserting data into database" });
+            return;
+          }
+
+          // Returnăm mesajul de succes
+          res.status(201).json({ message: "Conversația a fost inițiată" });
+        }
+      );
+    }
+  );
+});
+
+app.post("/api/messages", async (req, res) => {
+  const { chat_id, content } = req.body;
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  const sender_id = decoded.id;
+  try {
+    db.query(
+      "INSERT INTO mesaje (chat_id, sender_id, content) VALUES (?, ?,  ?)",
+      [chat_id, sender_id, content]
+    );
+
+    res.status(200).json({ message: "Message inserted successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error inserting message into database" });
   }
 });
 

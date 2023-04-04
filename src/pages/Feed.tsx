@@ -1,14 +1,16 @@
 import { Chat } from "../components/Chat";
 import { CreatePost } from "../components/CreatePost";
+import { CreatePostModal } from "../components/CreatePostModal";
 import { FriendList } from "../components/FriendList";
 import { PostCard } from "../components/PostCard";
 import Axios from "axios";
 import { useEffect, useState } from "react";
-import {CreatePostModal} from "../components/CreatePostModal";
 
 export const Feed = () => {
   const [openModal, setOpenModal] = useState(false);
-
+  const [chatData, setChatData] = useState({});
+  const [refresh, setRefresh] = useState(true);
+  const [openChat, setOpenChat] = useState(false);
   const [posts, setPosts] = useState([
     {
       id: 0,
@@ -21,11 +23,6 @@ export const Feed = () => {
     },
   ]);
   const [searchValue, setSearchValue] = useState("");
-  const [chatData, setChatData] = useState({
-    nume: "",
-    prenume: "",
-    user_id: 0,
-  });
 
   const handleSearch = (e: any) => {
     if (e.key === "Enter") {
@@ -35,7 +32,6 @@ export const Feed = () => {
         },
       }).then((data) => {
         setPosts(data.data);
-
       });
     }
   };
@@ -79,8 +75,12 @@ export const Feed = () => {
   });
   return (
     <>
-      {chatData.user_id !== 0 && <Chat chatData={chatData} />}
-      <FriendList setChatData={setChatData} />
+      {" "}
+      {
+        //@ts-ignore
+        chatData && <Chat openChat={openChat} setOpenChat={setOpenChat} chatData={chatData} setRefresh={setRefresh}/>
+      }
+      <FriendList openChat={openChat} setOpenChat={setOpenChat} setChatData={setChatData} refresh={refresh} />
       <div className="feed-wrapper">
         <div className={"max-w-[500px] w-full relative px-6"}>
           <div className="absolute inset-y-0 left-6 flex items-center pl-3 pointer-events-none">
@@ -92,10 +92,10 @@ export const Feed = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-    fill-rule="evenodd"
-    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-    clip-rule="evenodd"
-    />
+                fill-rule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
           <input
@@ -116,10 +116,11 @@ export const Feed = () => {
         </div>
       </div>
       <CreatePostModal
-          open={openModal}
-          setOpened={setOpenModal}
-          confirmHandle={()=>{
-            console.log("merge")}}
+        open={openModal}
+        setOpened={setOpenModal}
+        confirmHandle={() => {
+          console.log("merge");
+        }}
       />
     </>
   );

@@ -5,6 +5,9 @@ import React, { Fragment, useEffect, useState } from "react";
 export const FriendList = (props: {
   setChatData?: any;
   notification?: boolean;
+  refresh?: boolean;
+  openChat?:boolean
+  setOpenChat?:any
 }) => {
   const [friends, setFriends] = useState([
     {
@@ -41,7 +44,7 @@ export const FriendList = (props: {
       id: 0,
       nume: "",
       prenume: "",
-      poza_profil: ""
+      poza_profil: "",
     },
   ]);
   useEffect(() => {
@@ -54,8 +57,8 @@ export const FriendList = (props: {
     })
       .then((response) => {
         console.log(response.data);
-        setMyRequestsFriends(response.data.result2)
-        setOtherRequestsFriends(response.data.result1)
+        setMyRequestsFriends(response.data.result2);
+        setOtherRequestsFriends(response.data.result1);
         setFriends(response.data.mergedResults);
       })
       .catch((error) => {
@@ -68,13 +71,12 @@ export const FriendList = (props: {
       },
     })
       .then((response) => {
-        console.log("response.data",response.data)
+        console.log("response.data", response.data);
         setSuggestions(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
-
   }, []);
   const handleAccept = (id: number) => {
     Axios.put("http://localhost:3002/api/friend/update", {
@@ -166,6 +168,43 @@ export const FriendList = (props: {
     }
   });
 
+  const handleNewChat = (friendID: number) => {
+    const token = localStorage.getItem("token");
+
+    Axios.post(
+      "http://localhost:3002/api/conversations",
+      {
+        user_id1: friendID,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        console.log(response.data);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    Axios.get(`http://localhost:3002/api/conversations/${friendID}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        props.setChatData(response.data);
+        props.setOpenChat(true)
+        console.log("conv", response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   const friendList = friends.map((friend) => {
     if (friend.acceptat === "true") {
       return (
@@ -190,11 +229,18 @@ export const FriendList = (props: {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className={"flex flex-row justify-center items-center -translate-y-1/4 w-full gap-2" }>
-              <Menu.Item >
+            <Menu.Items
+              className={
+                "flex flex-row justify-center items-center -translate-y-1/4 w-full gap-2"
+              }
+            >
+              <Menu.Item>
                 <button
-                    className={"w-fit px-2 py-1 bg-red-800  text-white rounded-2xl border-2 border-black  bg-opacity-70 hover:bg-opacity-100" }
+                  className={
+                    "w-fit px-2 py-1 bg-red-800  text-white rounded-2xl border-2 border-black  bg-opacity-70 hover:bg-opacity-100"
+                  }
                   onClick={() => {
+                    handleNewChat(friend.id);
                     props.setChatData(friend);
                   }}
                 >
@@ -203,8 +249,9 @@ export const FriendList = (props: {
               </Menu.Item>
               <Menu.Item>
                 <button
-                    className={"w-fit px-2 py-1 bg-red-800 text-white rounded-2xl bg-opacity-70 border-2 border-black hover:bg-opacity-100" }
-
+                  className={
+                    "w-fit px-2 py-1 bg-red-800 text-white rounded-2xl bg-opacity-70 border-2 border-black hover:bg-opacity-100"
+                  }
                   onClick={() =>
                     (window.location.href = `/page/user/${friend.user_id}`)
                   }
@@ -218,45 +265,50 @@ export const FriendList = (props: {
       );
     }
   });
-  const suggestionsList =suggestions.map((suggestion) => {
-      return (
-        <Menu as="div" className="relative">
-          <Menu.Button className="flex relative flex-row items-center rounded-3xl w-full gap-2 justify-start bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white ">
-            <img
-              alt={`${suggestion.nume}${suggestion.prenume}_poza_profil`}
-              src={`data:image/png;base64,${suggestion.poza_profil}`}
-              className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
-            />
-            <div className={"flex flex-row gap-1"}>
-              <div>{suggestion.nume}</div>
-              <div>{suggestion.prenume}</div>
-            </div>
-          </Menu.Button>
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
+  const suggestionsList = suggestions.map((suggestion) => {
+    return (
+      <Menu as="div" className="relative">
+        <Menu.Button className="flex relative flex-row items-center rounded-3xl w-full gap-2 justify-start bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white ">
+          <img
+            alt={`${suggestion.nume}${suggestion.prenume}_poza_profil`}
+            src={`data:image/png;base64,${suggestion.poza_profil}`}
+            className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
+          />
+          <div className={"flex flex-row gap-1"}>
+            <div>{suggestion.nume}</div>
+            <div>{suggestion.prenume}</div>
+          </div>
+        </Menu.Button>
+        <Transition
+          as={Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+          <Menu.Items
+            className={
+              "flex flex-row justify-center items-center -translate-y-1/4 w-full gap-2"
+            }
           >
-            <Menu.Items className={"flex flex-row justify-center items-center -translate-y-1/4 w-full gap-2" }>
-              <Menu.Item>
-                <button
-                    className={"w-fit px-2 py-1 bg-red-800 text-white rounded-2xl bg-opacity-70 border-2 border-black hover:bg-opacity-100" }
-
-                  onClick={() =>
-                    (window.location.href = `/page/user/${suggestion.id}`)
-                  }
-                >
-                  Profile
-                </button>
-              </Menu.Item>
-            </Menu.Items>
-          </Transition>
-        </Menu>
-      );
+            <Menu.Item>
+              <button
+                className={
+                  "w-fit px-2 py-1 bg-red-800 text-white rounded-2xl bg-opacity-70 border-2 border-black hover:bg-opacity-100"
+                }
+                onClick={() =>
+                  (window.location.href = `/page/user/${suggestion.id}`)
+                }
+              >
+                Profile
+              </button>
+            </Menu.Item>
+          </Menu.Items>
+        </Transition>
+      </Menu>
+    );
   });
 
   if (props.notification) {
