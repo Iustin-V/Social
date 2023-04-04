@@ -12,7 +12,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 function App() {
   return (
     <>
-      {localStorage.token && window.location.href!=="/create-your-profile" ? <Navigation /> : <></>}
+      {localStorage.token && !window.location.href.includes("/create-your-profile") ? <Navigation /> : <></>}
       <BrowserRouter>
         <Routes>
           <Route path={`/`} element={<Feed />} />

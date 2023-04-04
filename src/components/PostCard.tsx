@@ -68,11 +68,11 @@ export const PostCard = (props: PostCardInterface) => {
         </button>
       )}
       <div className="h-full relative  border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-        <img
-          className=" w-full object-cover object-center"
-          src={src}
-          alt="blog"
-        />
+        {props.imagine && <img
+            className=" w-full object-cover object-center"
+            src={src}
+            alt="post_image"
+        />}
         <div className="p-6">
           <p className="leading-relaxed  text-xl font-bold">
             {props.nume} {props.prenume}

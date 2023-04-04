@@ -96,7 +96,7 @@ export const Navigation = () => {
                       className={classNames(
                         item.current
                           ? "bg-[#a11b21] text-white"
-                          : "hover-red bg-white hover:text-white",
+                          : "bg-white hover:text-white hover:bg-red-500",
                         "rounded-md px-3 py-2 text-sm font-medium text-black "
                       )}
                       aria-current={item.current ? "page" : undefined}

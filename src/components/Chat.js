@@ -13,7 +13,6 @@ export const Chat = (props) => {
   });
   // wait for TalkJS to load
   const [talkLoaded, markTalkLoaded] = useState(false);
-  console.log('data',props.chatData)
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -23,7 +22,6 @@ export const Chat = (props) => {
       },
     })
       .then((response) => {
-        console.log(response.data);
         setProfilData(response.data[0]);
       })
       .catch((error) => {
