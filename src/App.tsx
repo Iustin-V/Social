@@ -33,6 +33,7 @@ function App() {
         <Routes>
           <Route path={`/`} element={<Feed />} />
           <Route path={`/account`} element={<Account />} />
+          <Route path={`/page/user/:id`} element={<Account />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/create-your-profile" element={<CreateProfile />} />
