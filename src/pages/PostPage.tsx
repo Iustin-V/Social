@@ -300,7 +300,7 @@ export const PostPage = () => {
 
       <div className="flex flex-col max-h-[600px]  items-start justify-center  w-[100%] md:w-[45%] bg-white dark:bg-gray-800">
         <div
-            //@ts-ignore
+          //@ts-ignore
           ref={ref}
           className={
             "flex flex-col w-full max-h-[600px] overflow-y-auto items-start"
@@ -310,21 +310,21 @@ export const PostPage = () => {
         </div>
         <div className="flex justify-center items-center mt-3 w-full">
           <div className=" px-2 w-full rounded-[12px] bg-white p-3 shadow-md border">
-            <p className="text-xl font-semibold text-blue-900 cursor-pointer transition-all hover:text-black">
+            <p className="text-xl font-semibold cursor-pointer transition-all text-red-800">
               Add Comment
             </p>
             <textarea
               id="continut"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="h-10 px-3 text-sm py-1 mt-5 outline-none border-gray-300 w-full resize-none border rounded-lg placeholder:text-sm"
+              className=" px-3 text-sm py-1 mt-3 outline-none border-gray-300 w-full resize-none border rounded-lg placeholder:text-sm"
               placeholder="Add your comments here"
             />
 
             <div className="flex justify-between mt-2">
               <button
                 onClick={handleSubmit}
-                className="h-8 w-[150px] bg-blue-400 text-sm text-white rounded-lg transition-all cursor-pointer hover:bg-blue-600"
+                className="h-8 w-[150px] bg-red-900 text-sm text-white rounded-lg transition-all cursor-pointer hover:bg-red-600"
               >
                 Submit comment
               </button>

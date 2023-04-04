@@ -120,7 +120,7 @@ export const FriendList = (props: {
                 <div>{friend.prenume}</div>
               </div>
             </div>
-            <div>
+            <div className={'flex flex-row items-center'}>
               <button
                 className={"h-10 w-10 hover:scale-125"}
                 onClick={() => handleAccept(friend.id)}
