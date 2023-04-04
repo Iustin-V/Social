@@ -1,7 +1,7 @@
 import ConfirmationModal from "./ConfirmationModal";
 import { CreatePostModal } from "./CreatePostModal";
 import Axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useJwt } from "react-jwt";
 
 interface PostCardInterface {
@@ -22,8 +22,20 @@ export const PostCard = (props: PostCardInterface) => {
   console.log(loggedInUserId, props.userId);
 
   const [openModal, setOpenModal] = useState(false);
+  const [numberOfComments, setNumberOfComments] = useState(0);
   const [openEditModal, setOpenEditModal] = useState(false);
   const src = "data:image/png;base64," + props.imagine;
+
+  useEffect(() => {
+    Axios.get(`http://localhost:3002/api/comments/count/${props.id}`)
+      .then((data) => {
+        console.log("nbcom", data.data);
+        setNumberOfComments(data.data.count);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const handleDelete = () => {
     Axios.delete("http://localhost:3002/api/delete-post", {
@@ -116,8 +128,10 @@ export const PostCard = (props: PostCardInterface) => {
 
           <p className="leading-relaxed mb-3">{props.content}</p>
           <div className="flex items-center flex-wrap ">
-            <a href={`/post/${props.id}`}
-               className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0 hover:text-indigo-900 hover:underline">
+            <a
+              href={`/post/${props.id}`}
+              className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0 hover:text-indigo-900 hover:underline"
+            >
               See post
               <svg
                 className="w-4 h-4 ml-2"
@@ -159,7 +173,7 @@ export const PostCard = (props: PostCardInterface) => {
               >
                 <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
               </svg>
-              6
+              {numberOfComments}
             </span>
           </div>
         </div>

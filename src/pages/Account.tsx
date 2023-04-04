@@ -168,12 +168,14 @@ export const Account = () => {
                   </div>
                   <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
                     <div className="flex flex-row gap-2 items-center justify-center margin-responsive">
-                      {params.id && (  <button
-                        className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
-                        type="button"
-                      >
-                        Connect
-                      </button>)}
+                      {params.id && (
+                        <button
+                          className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                          type="button"
+                        >
+                          Connect
+                        </button>
+                      )}
                       {!params.id && (
                         <button
                           className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -245,7 +247,7 @@ export const Account = () => {
           </div>
         </section>
       </div>
-      {postList.length > 1 && (
+      {postListImage.length > 1 && (
         <>
           <div className="text-center mt-12">
             <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">

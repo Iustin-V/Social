@@ -34,6 +34,32 @@ app.get("/api/posts/all", (req, res) => {
   );
 });
 
+app.get("/api/users/all",async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  const user_id = decoded.id;
+  db.query(
+    "SELECT users.id, profil.nume, profil.prenume, profil.poza_profil FROM users JOIN profil ON users.id = profil.user_id WHERE users.id NOT IN ( SELECT user_id1 FROM prieteni WHERE user_id2 = ? AND acceptat = 'true' UNION SELECT user_id2 FROM prieteni WHERE user_id1 = ? AND acceptat = 'true' ) AND users.id <> ?; users.id NOT IN (SELECT CASEWHEN user_id1 = ? THEN user_id2 ELSE user_id1 END AS friend_id FROM friends WHERE user_id1 = ? OR user_id2 = ? ) AND users.id <> ?",
+    [user_id, user_id, user_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+        return;
+      }
+      result.forEach((post) => {
+        post.imagine = Buffer.from(post.imagine).toString("base64");
+      });
+      res.setHeader("Content-Type", "application/json");
+      res.json(result);
+    }
+  );
+});
+
 app.get("/api/your-posts", async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const options = { expiresIn: "1h" };
@@ -156,6 +182,7 @@ app.get("/api/user/profile/:id", (req, res) => {
     res.status(500).json({ error: "Error signing token" });
   }
 });
+
 app.get("/api/user/posts/:id", (req, res) => {
   try {
     const id = req.params.id;
@@ -173,6 +200,60 @@ app.get("/api/user/posts/:id", (req, res) => {
 
       res.json(result);
     });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
+});
+
+app.get("/api/posts/:id", (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log("id", id);
+
+    db.query(
+      "SELECT postari.id,postari.user_id,continut,data_postarii,imagine,nume,prenume FROM postari,profil WHERE postari.id= ? and postari.user_id=profil.user_id",
+      id,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: "Error fetching data from database" });
+          return;
+        }
+        result.forEach((post) => {
+          post.imagine = Buffer.from(post.imagine).toString("base64");
+        });
+
+        res.json(result);
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
+});
+
+app.get("/api/comments/:id", (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log("id", id);
+
+    db.query(
+      "SELECT comentarii.id,comentarii.user_id,comentarii.continut,poza_profil,nume,prenume FROM comentarii,profil WHERE comentarii.post_id=? and comentarii.user_id=profil.user_id",
+      id,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: "Error fetching data from database" });
+          return;
+        }
+        result?.forEach((post) => {
+          post.poza_profil = Buffer.from(post.poza_profil).toString("base64");
+        });
+
+        res.json(result);
+      }
+    );
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Error signing token" });
@@ -285,6 +366,22 @@ app.get("/api/posts/search", (req, res) => {
       res.json(result);
     }
   );
+});
+
+app.get("/api/comments/count/:id", (req, res) => {
+  const postId = req.params.id;
+  const query = "SELECT COUNT(*) as count FROM comentarii WHERE post_id = ?";
+
+  db.query(query, postId, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Error fetching data from database" });
+      return;
+    }
+
+    const count = result[0].count;
+    res.json({ count });
+  });
 });
 
 app.post("/api/register", (req, res) => {
@@ -429,6 +526,36 @@ app.post("/api/create-post", async (req, res) => {
   db.query(
     "INSERT INTO postari(user_id,continut,imagine) VALUES(?,?,?)",
     [user_id, continut, binaryImagine],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: "Error fetching user data from database" });
+        return;
+      }
+      if (result.length === 0) {
+        res.status(401).json({ error: "Invalid credentials" });
+        return;
+      }
+
+      res.status(200).json({ message: "Post created successfully" });
+    }
+  );
+});
+app.post("/api/post/create-comment", async (req, res) => {
+  const { post_id, continut } = req.body;
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  const user_id = decoded.id;
+
+  db.query(
+    "INSERT INTO comentarii(user_id,post_id, continut) VALUES(?,?,?)",
+    [user_id, post_id, continut],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -641,6 +768,32 @@ app.delete("/api/delete-post", (req, res) => {
 
     const user_id = decoded.id;
 
+    db.query(
+      "DELETE FROM comentarii WHERE post_id=? ",
+      postId,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(500)
+            .json({ error: "Error deleting user posts from database" });
+          return;
+        }
+      }
+    );
+    db.query(
+      "DELETE FROM aprecieri WHERE post_id=? ",
+      postId,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(500)
+            .json({ error: "Error deleting user posts from database" });
+          return;
+        }
+      }
+    );
     db.query(
       "DELETE FROM postari WHERE id=? and user_id=?",
       [postId, user_id],
