@@ -67,12 +67,12 @@ export const Navigation = () => {
           <div className="relative flex h-16 items-center justify-between">
             <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
               {/* Mobile menu button*/}
-              <Disclosure.Button className="inline-flex items-center justify-center hover:bg-red rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white md:hidden">
+              <Disclosure.Button className=" hover:bg-red-500 inline-flex items-center justify-center  rounded-md p-2 text-gray-400  hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white md:hidden">
                 <span className="sr-only ">Open main menu</span>
                 {false ? (
                   <XMarkIcon className="block h-6 w-6 text-black hover:bg-red" aria-hidden="true" />
                 ) : (
-                  <Bars3Icon className="block h-6 w-6 text-black hover:bg-red" aria-hidden="true" />
+                  <Bars3Icon className="block h-6 w-6 text-black " aria-hidden="true" />
                 )}
               </Disclosure.Button>
             </div>
@@ -206,7 +206,7 @@ export const Navigation = () => {
           </div>
         </div>
 
-        <Disclosure.Panel className=" block md:block">
+        <Disclosure.Panel className=" block md:block md:hidden">
           <div className="space-y-1 px-2 pb-3 pt-2">
             {navigation.map((item) => (
               <Disclosure.Button
@@ -215,8 +215,8 @@ export const Navigation = () => {
                 href={item.href}
                 className={classNames(
                   item.current
-                    ? "bg-gray-900 text-white"
-                    : "text-white hover:bg-gray-700 hover:text-white",
+                    ? "bg-[#a11b21] text-white"
+                    : "bg-white hover:text-white hover:bg-red-500",
                   "block rounded-md px-3 py-2 text-base font-medium"
                 )}
                 aria-current={item.current ? "page" : undefined}
