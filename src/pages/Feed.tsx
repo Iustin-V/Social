@@ -5,6 +5,7 @@ import { PostCard } from "../components/PostCard";
 import Axios from "axios";
 import { useEffect, useState } from "react";
 import { log } from "util";
+import {CreatePostModal} from "../components/CreatePostModal";
 
 export const Feed = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -116,6 +117,12 @@ export const Feed = () => {
           <div className="feed-column">{postListOdd}</div>
         </div>
       </div>
+      <CreatePostModal
+          open={openModal}
+          setOpened={setOpenModal}
+          confirmHandle={()=>{
+            console.log("merge")}}
+      />
     </>
   );
 };
