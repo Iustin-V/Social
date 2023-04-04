@@ -1,6 +1,6 @@
-import { Menu } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
 import Axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 export const FriendList = (props: {
   setChatData?: any;
@@ -13,8 +13,7 @@ export const FriendList = (props: {
       acceptat: "false",
       prenume: "",
       poza_profil: "",
-      user_id1: 0,
-      user_id2: 0,
+      user_id: 0,
     },
   ]);
 
@@ -127,22 +126,52 @@ export const FriendList = (props: {
   const friendList = friends.map((friend) => {
     if (friend.acceptat === "true") {
       return (
-        <div
-          className="flex flex-row items-center rounded-3xl gap-2 justify-start bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white "
-          onClick={() => {
-            props.setChatData(friend);
-          }}
-        >
-          <img
-            alt={`${friend.nume}${friend.prenume}_poza_profil`}
-            src={`data:image/png;base64,${friend.poza_profil}`}
-            className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
-          />
-          <div className={"flex flex-row gap-1"}>
-            <div>{friend.nume}</div>
-            <div>{friend.prenume}</div>
-          </div>
-        </div>
+        <Menu as="div" className="relative">
+          <Menu.Button className="flex relative flex-row items-center rounded-3xl w-full gap-2 justify-start bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white ">
+            <img
+              alt={`${friend.nume}${friend.prenume}_poza_profil`}
+              src={`data:image/png;base64,${friend.poza_profil}`}
+              className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
+            />
+            <div className={"flex flex-row gap-1"}>
+              <div>{friend.nume}</div>
+              <div>{friend.prenume}</div>
+            </div>
+          </Menu.Button>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className={"flex flex-row justify-center items-center -translate-y-1/4 w-full gap-2" }>
+              <Menu.Item >
+                <button
+                    className={"w-fit px-2 py-1 bg-red-800  text-white rounded-2xl border-2 border-black  bg-opacity-70 hover:bg-opacity-100" }
+                  onClick={() => {
+                    props.setChatData(friend);
+                  }}
+                >
+                  Chat
+                </button>
+              </Menu.Item>
+              <Menu.Item>
+                <button
+                    className={"w-fit px-2 py-1 bg-red-800 text-white rounded-2xl bg-opacity-70 border-2 border-black hover:bg-opacity-100" }
+
+                  onClick={() =>
+                    (window.location.href = `/page/user/${friend.user_id}`)
+                  }
+                >
+                  Profile
+                </button>
+              </Menu.Item>
+            </Menu.Items>
+          </Transition>
+        </Menu>
       );
     }
   });
