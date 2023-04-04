@@ -29,33 +29,53 @@ export const Account = () => {
       prenume: "",
     },
   ]);
+  let params = useParams();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (params.id) {
+      Axios.get(`http://localhost:3002/api/user/profile/${params.id}`)
+        .then((data) => {
+          setProfilData(data.data[0]);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
 
-    Axios.get("http://localhost:3002/api/profile", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        console.log(response.data);
-        setProfilData(response.data[0]);
+      Axios.get(`http://localhost:3002/api/user/posts/${params.id}`)
+        .then((response) => {
+          console.log(response.data);
+          setPosts(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      Axios.get("http://localhost:3002/api/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .catch((error) => {
-        console.error(error);
-      });
-    Axios.get("http://localhost:3002/api/your-posts", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        console.log(response.data);
-        setPosts(response.data);
+        .then((response) => {
+          console.log(response.data);
+          setProfilData(response.data[0]);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      Axios.get("http://localhost:3002/api/your-posts", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .catch((error) => {
-        console.error(error);
-      });
+        .then((response) => {
+          console.log(response.data);
+          setPosts(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }, []);
 
   const postListImage = posts.map((post) => {
@@ -148,21 +168,23 @@ export const Account = () => {
                   </div>
                   <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
                     <div className="flex flex-row gap-2 items-center justify-center margin-responsive">
-                      <button
+                      {params.id && (  <button
                         className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="button"
                       >
                         Connect
-                      </button>
-                      <button
-                        className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
-                        type="button"
-                        onClick={() => {
-                          window.location.href = "/edit-your-profile";
-                        }}
-                      >
-                        Edit
-                      </button>
+                      </button>)}
+                      {!params.id && (
+                        <button
+                          className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                          type="button"
+                          onClick={() => {
+                            window.location.href = "/edit-your-profile";
+                          }}
+                        >
+                          Edit
+                        </button>
+                      )}
                       <a
                         className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                         href="#posts"
@@ -223,28 +245,36 @@ export const Account = () => {
           </div>
         </section>
       </div>
-      <div className="text-center mt-12">
-        <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-          Poze
-        </h3>
-      </div>
-      <div
-        id={"posts"}
-        className="flex flex-col md:flex-row w-full items-center flex-wrap justify-center pt-1"
-      >
-        {postListImage}
-      </div>
-      <div className="text-center mt-12">
-        <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-          Postari
-        </h3>
-      </div>
-      <div
-        id={"posts"}
-        className="flex flex-col md:flex-row w-full items-center flex-wrap justify-center pt-1"
-      >
-        {postList}
-      </div>
+      {postList.length > 1 && (
+        <>
+          <div className="text-center mt-12">
+            <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
+              Poze
+            </h3>
+          </div>
+          <div
+            id={"posts"}
+            className="flex flex-col md:flex-row w-full items-center flex-wrap justify-center pt-1"
+          >
+            {postListImage}
+          </div>
+        </>
+      )}
+      {postList.length > 1 && (
+        <>
+          <div className="text-center mt-12">
+            <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
+              Postari
+            </h3>
+          </div>
+          <div
+            id={"posts"}
+            className="flex flex-col md:flex-row w-full items-center flex-wrap justify-center pt-1"
+          >
+            {postList}
+          </div>
+        </>
+      )}
     </>
   );
 };

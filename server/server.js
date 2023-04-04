@@ -131,6 +131,54 @@ app.get("/api/profile", async (req, res) => {
   }
 });
 
+app.get("/api/user/profile/:id", (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log("id", id);
+
+    db.query("SELECT * FROM profil WHERE user_id=?", id, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+        return;
+      }
+      result.forEach((profile) => {
+        profile.poza_profil = Buffer.from(profile.poza_profil).toString(
+          "base64"
+        );
+        profile.poza_cover = Buffer.from(profile.poza_cover).toString("base64");
+      });
+
+      res.json(result);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
+});
+app.get("/api/user/posts/:id", (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log("id", id);
+
+    db.query("SELECT * FROM postari WHERE user_id=?", id, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+        return;
+      }
+      result.forEach((post) => {
+        post.imagine = Buffer.from(post.imagine).toString("base64");
+      });
+
+      res.json(result);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
+});
+
 app.get("/api/chat/current-user", async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
@@ -508,7 +556,6 @@ app.put("/api/edit-post", async (req, res) => {
 });
 
 app.put("/api/friend/update", async (req, res) => {
-
   const { prietenieId, stare } = req.body;
 
   const query = "UPDATE prieteni SET acceptat = ? WHERE id = ?";
@@ -521,10 +568,9 @@ app.put("/api/friend/update", async (req, res) => {
     res.status(200).json({ message: "Friendship updated successfully" });
   });
 });
+
 app.delete("/api/friend/delete-request", async (req, res) => {
-
-  const prietenieId= req.headers.body;
-
+  const prietenieId = req.headers.body;
 
   const query = "DELETE FROM prieteni WHERE id = ?";
   db.query(query, prietenieId, (err, result) => {
@@ -536,7 +582,6 @@ app.delete("/api/friend/delete-request", async (req, res) => {
     res.status(200).json({ message: "Friendship updated successfully" });
   });
 });
-
 
 app.delete("/api/delete-account", (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
