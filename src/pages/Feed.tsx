@@ -1,4 +1,6 @@
+import { Chat } from "../components/Chat";
 import { CreatePost } from "../components/CreatePost";
+import { FriendList } from "../components/FriendList";
 import { PostCard } from "../components/PostCard";
 import Axios from "axios";
 import { useEffect, useState } from "react";
@@ -20,6 +22,11 @@ export const Feed = () => {
     },
   ]);
   const [searchValue, setSearchValue] = useState("");
+  const [chatData, setChatData] = useState({
+    nume: "",
+    prenume: "",
+    user_id: 0,
+  });
 
   const handleSearch = (e:any) => {
     if (e.key === "Enter") {
@@ -71,7 +78,8 @@ export const Feed = () => {
   });
   return (
     <>
-
+      {chatData.user_id !== 0 && <Chat chatData={chatData} />}
+      <FriendList setChatData={setChatData} />
       <div className="feed-wrapper">
         <div className={"max-w-[500px] w-full relative px-6"}>
           <div className="absolute inset-y-0 left-6 flex items-center pl-3 pointer-events-none">

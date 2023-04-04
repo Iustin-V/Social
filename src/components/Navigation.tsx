@@ -1,7 +1,8 @@
 import Logo from "../images/Red-Eclipse-logo.webp";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import React, { Fragment } from "react";
+import Axios from "axios";
+import React,{ Fragment, useEffect, useState } from "react";
 
 
 
@@ -40,6 +41,23 @@ export const Navigation = () => {
      },
    ])
   }, [window.location.href]);
+  const [profilePic, setProfilePic] = useState({poza_profil:''});
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    Axios.get("http://localhost:3002/api/user-profile-picture", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        console.log(response.data)
+        setProfilePic(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <Disclosure as="nav" className="red-background">
       <>
@@ -107,8 +125,8 @@ export const Navigation = () => {
                   <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="sr-only">Open user menu</span>
                     <img
-                      className="h-10 w-10 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      className="h-10 w-10 rounded-full object-cover"
+                      src={`data:image/png;base64,${profilePic.poza_profil}`}
                       alt=""
                     />
                   </Menu.Button>
@@ -152,14 +170,13 @@ export const Navigation = () => {
                     <Menu.Item>
                       {({ active }) => (
                         <a
-                          href="#"
+                          href="/login"
                           className={classNames(
                             active ? "bg-gray-100" : "",
                             "block px-4 py-2 text-sm text-gray-700"
                           )}
                           onClick={() => {
                             localStorage.removeItem("token");
-                            window.location.href = "/login";
                           }}
                         >
                           Sign out

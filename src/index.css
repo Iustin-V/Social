@@ -105,3 +105,13 @@ code {
       margin-top: 0px;
     }
   }
+
+
+.chat{
+  position: fixed;
+  right: 50px;
+  bottom: 0;
+}
+.chat>iframe{
+  height: 500px !important;
+}

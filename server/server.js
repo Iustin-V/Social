@@ -33,6 +33,7 @@ app.get("/api/posts/all", (req, res) => {
     }
   );
 });
+
 app.get("/api/your-posts", async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const options = { expiresIn: "1h" };
@@ -58,6 +59,46 @@ app.get("/api/your-posts", async (req, res) => {
       res.json(result);
     }
   );
+});
+
+app.get("/api/user-profile-picture", async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  try {
+    const decoded = await jwt.verify(token, secretKey, options);
+    const userId = decoded.id;
+
+    db.query(
+      "SELECT poza_profil FROM profil WHERE user_id = ?",
+      userId,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(500)
+            .json({ error: "Error fetching user data from database" });
+          return;
+        }
+
+        if (result.length === 0) {
+          res.status(404).json({ error: "User not found" });
+          return;
+        }
+        result.forEach((profile) => {
+          profile.poza_profil = Buffer.from(profile.poza_profil).toString(
+            "base64"
+          );
+        });
+
+        res.status(200).json({ poza_profil: result[0].poza_profil });
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error decoding token" });
+  }
 });
 
 app.get("/api/profile", async (req, res) => {
@@ -91,6 +132,94 @@ app.get("/api/profile", async (req, res) => {
     res.status(500).json({ error: "Error signing token" });
   }
 });
+
+app.get("/api/chat/current-user", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const options = { expiresIn: "1h" };
+    const secretKey = "secretkey";
+
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    const user_id = decoded.id;
+    db.query(
+      "SELECT   nume,prenume,user_id,poza_profil,email  FROM profil,users WHERE profil.user_id=? and profil.user_id=users.id",
+      user_id,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: "Error fetching data from database" });
+          return;
+        }
+        result.forEach((profile) => {
+          profile.poza_profil = Buffer.from(profile.poza_profil).toString(
+            "base64"
+          );
+        });
+
+        res.json(result);
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
+});
+
+app.get("/api/chat/friend", async (req, res) => {
+
+    const token = req.headers.authorization.split(" ")[1];
+    const options = {expiresIn: "1h"};
+    const secretKey = "secretkey";
+
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    const user_id = decoded.id;
+
+    const promise1 = new Promise((resolve, reject) => {
+      db.query(
+          "SELECT DISTINCT p1.user_id1 AS user_id, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id1 = p2.user_id WHERE p1.user_id2 = ?",
+          user_id,
+          (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              result.forEach((user) => {
+                user.poza_profil = Buffer.from(user.poza_profil).toString("base64");
+              });
+              resolve(result);
+            }
+          }
+      );
+    });
+
+    const promise2 = new Promise((resolve, reject) => {
+      db.query(
+          "SELECT DISTINCT p1.user_id2 AS user_id, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id2 = p2.user_id WHERE p1.user_id1 = ?",
+          user_id,
+          (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              result.forEach((user) => {
+                user.poza_profil = Buffer.from(user.poza_profil).toString("base64");
+              });
+              resolve(result);
+            }
+          }
+      );
+    });
+
+    Promise.all([promise1, promise2])
+        .then((results) => {
+          const mergedResults = results.flat();
+          res.json(mergedResults);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({error: "Error fetching data from database"});
+        });
+  });
 
 app.get("/api/posts/search", (req, res) => {
   const searchTerm = `%${req.headers.body}%`;
@@ -241,6 +370,7 @@ app.post("/api/create-profile", async (req, res) => {
       .json({ message: "Profil created successfully", id: result.insertId });
   });
 });
+
 app.put("/api/edit-profile", async (req, res) => {
   try {
     const {
