@@ -40,10 +40,11 @@ code {
 }
 .feed-wrapper {
   display: flex;
+  flex-direction: column;
   width: 100%;
   align-items: center;
   justify-content: center;
-  padding: 26px 0 0 0;
+  padding: 16px 0 0 0;
 }
 
 .date-picker>div>div>input {
@@ -84,4 +85,13 @@ code {
   100% {
     transform: translateX(0);
   }
+}
+.hover-svg:hover{
+  cursor: pointer;
+  border-color: #a11b21;
+}
+.hover-svg:hover>div>svg{
+
+  stroke:#a11b21;
+  stroke-width: 2px;
 }
