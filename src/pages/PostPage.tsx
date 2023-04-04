@@ -15,6 +15,7 @@ export const PostPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [numberOfComments, setNumberOfComments] = useState(0);
+  const [numberOfLikes, setNumberOfLikes] = useState(0);
 
   const [comment, setComment] = useState("");
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -60,14 +61,41 @@ export const PostPage = () => {
 
       Axios.get(`http://localhost:3002/api/comments/count/${params.id}`)
         .then((data) => {
-          console.log("nbcom", data.data);
           setNumberOfComments(data.data.count);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      Axios.get(`http://localhost:3002/api/likes/count/${params.id}`)
+        .then((data) => {
+          setNumberOfLikes(data.data.count);
         })
         .catch((error) => {
           console.error(error);
         });
     }
   }, [refresh]);
+
+  const useChatScroll = (
+    dep: {
+      post_id: number;
+      user_id: number;
+      continut: string;
+      prenume: string;
+      id: number;
+      poza_profil: string;
+      nume: string;
+    }[]
+  ) => {
+    const ref = React.useRef<HTMLDivElement>();
+    React.useEffect(() => {
+      if (ref.current) {
+        ref.current.scrollTop = ref.current.scrollHeight;
+      }
+    }, [dep]);
+    return ref;
+  };
+  const ref = useChatScroll(comments);
 
   const commentList = comments.map((comment) => {
     return (
@@ -113,6 +141,31 @@ export const PostPage = () => {
         console.log(error);
       });
   };
+
+  const handleLike = () => {
+    const token = localStorage.getItem("token");
+
+    Axios.post(
+      "http://localhost:3002/api/like-post",
+      {
+        post_id: params.id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        setRefresh(!refresh);
+        setComment("");
+        console.log("merge");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleDelete = () => {
     Axios.delete("http://localhost:3002/api/delete-post", {
       headers: {
@@ -208,7 +261,10 @@ export const PostPage = () => {
 
             <p className="leading-relaxed mb-3">{post.continut}</p>
             <div className="flex items-center flex-wrap ">
-              <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+              <span
+                onClick={handleLike}
+                className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200"
+              >
                 <svg
                   className="w-4 h-4 mr-1"
                   stroke="currentColor"
@@ -221,7 +277,7 @@ export const PostPage = () => {
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
                 </svg>
-                1.2K
+                {numberOfLikes}
               </span>
               <span className="text-gray-400 inline-flex items-center leading-none text-sm">
                 <svg
@@ -244,6 +300,8 @@ export const PostPage = () => {
 
       <div className="flex flex-col max-h-[500px]  items-start justify-center  w-[100%] md:w-[45%] bg-white dark:bg-gray-800">
         <div
+            //@ts-ignore
+          ref={ref}
           className={
             "flex flex-col w-full max-h-[500px] overflow-y-auto items-start"
           }

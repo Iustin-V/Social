@@ -34,7 +34,7 @@ app.get("/api/posts/all", (req, res) => {
   );
 });
 
-app.get("/api/users/all",async (req, res) => {
+app.get("/api/users/all", async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const options = { expiresIn: "1h" };
   const secretKey = "secretkey";
@@ -390,6 +390,22 @@ app.get("/api/comments/count/:id", (req, res) => {
   });
 });
 
+app.get("/api/likes/count/:id", (req, res) => {
+  const postId = req.params.id;
+  const query = "SELECT COUNT(*) as count FROM aprecieri WHERE post_id = ?";
+
+  db.query(query, postId, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: "Error fetching data from database" });
+      return;
+    }
+
+    const count = result[0].count;
+    res.json({ count });
+  });
+});
+
 app.post("/api/register", (req, res) => {
   const { email, parola } = req.body;
   const saltRounds = 10;
@@ -608,6 +624,36 @@ app.post("/api/post/create-comment", async (req, res) => {
         res.status(200).json({ message: "Post created successfully" });
       }
   );
+});
+
+app.post("/api/like-post", async (req, res) => {
+  const { post_id } = req.body;
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  try {
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    const user_id = decoded.id;
+
+    db.query(
+      "INSERT INTO aprecieri (user_id, post_id) VALUES (?, ?)",
+      [user_id, post_id],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: "Error adding like to database" });
+          return;
+        }
+
+        res.status(200).json({ message: "Like added successfully" });
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error adding like to database" });
+  }
 });
 
 app.put("/api/edit-profile", async (req, res) => {

@@ -18,7 +18,6 @@ export const Navigation = () => {
       href: "/",
       current: window.location.href === "http://localhost:3000/",
     },
-    { name: "Friends", href: "#", current:  window.location.href.includes("friends") },
     { name: "Account", href: "/account", current:  window.location.href.includes("account") },
   ])
 
@@ -30,11 +29,7 @@ export const Navigation = () => {
        href: "/",
        current: window.location.href === "http://localhost:3000/",
      },
-     {
-       name: "Friends",
-       href: "#",
-       current: window.location.href.includes("friends"),
-     },
+
      {
        name: "Account",
        href: "/account",

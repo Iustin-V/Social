@@ -23,19 +23,51 @@ export const PostCard = (props: PostCardInterface) => {
 
   const [openModal, setOpenModal] = useState(false);
   const [numberOfComments, setNumberOfComments] = useState(0);
+  const [refresh, setRefresh] = useState(false);
+
+  const [numberOfLikes, setNumberOfLikes] = useState(0);
   const [openEditModal, setOpenEditModal] = useState(false);
   const src = "data:image/png;base64," + props.imagine;
 
   useEffect(() => {
     Axios.get(`http://localhost:3002/api/comments/count/${props.id}`)
       .then((data) => {
-        console.log("nbcom", data.data);
         setNumberOfComments(data.data.count);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+    Axios.get(`http://localhost:3002/api/likes/count/${props.id}`)
+      .then((data) => {
+        setNumberOfLikes(data.data.count);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [refresh]);
+
+  const handleLike = () => {
+    const token = localStorage.getItem("token");
+
+    Axios.post(
+      "http://localhost:3002/api/like-post",
+      {
+        post_id: props.id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        setRefresh(!refresh);
+        console.log("merge");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const handleDelete = () => {
     Axios.delete("http://localhost:3002/api/delete-post", {
@@ -130,7 +162,7 @@ export const PostCard = (props: PostCardInterface) => {
           <div className="flex items-center flex-wrap ">
             <a
               href={`/post/${props.id}`}
-              className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0 hover:text-indigo-900 hover:underline"
+              className="text-red-400 inline-flex items-center md:mb-2 lg:mb-0 hover:text-red-400 hover:underline"
             >
               See post
               <svg
@@ -146,7 +178,10 @@ export const PostCard = (props: PostCardInterface) => {
                 <path d="M12 5l7 7-7 7"></path>
               </svg>
             </a>
-            <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+            <span
+              onClick={handleLike}
+              className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200"
+            >
               <svg
                 className="w-4 h-4 mr-1"
                 stroke="currentColor"
@@ -159,7 +194,7 @@ export const PostCard = (props: PostCardInterface) => {
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
-              1.2K
+              {numberOfLikes}
             </span>
             <span className="text-gray-400 inline-flex items-center leading-none text-sm">
               <svg
