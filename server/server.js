@@ -441,6 +441,136 @@ app.get("/api/friends/check/:id", async (req, res) => {
   }
 });
 
+app.get("/api/user-stats", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const options = { expiresIn: "1h" };
+    const secretKey = "secretkey";
+
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    const user_id = decoded.id;
+
+    const promise1 = new Promise((resolve, reject) => {
+      db.query(
+        "SELECT COUNT(*) AS commentCount FROM comentarii WHERE user_id = ?",
+        user_id,
+        (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result[0].commentCount);
+          }
+        }
+      );
+    });
+
+    const promise2 = new Promise((resolve, reject) => {
+      db.query(
+        "SELECT COUNT(*) AS photoPostCount FROM postari WHERE user_id = ? AND imagine IS NOT NULL",
+        user_id,
+        (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result[0].photoPostCount);
+          }
+        }
+      );
+    });
+
+    const promise3 = new Promise((resolve, reject) => {
+      db.query(
+        "SELECT COUNT(*) AS friendCount FROM prieteni WHERE (user_id1 = ? OR user_id2 = ?) AND acceptat = 'true'",
+        [user_id, user_id],
+        (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result[0].friendCount);
+          }
+        }
+      );
+    });
+
+    Promise.all([promise1, promise2, promise3])
+      .then((results) => {
+        console.log("results", results);
+        const [commentCount, photoPostCount, friendCount] = results;
+        res.json({ commentCount, photoPostCount, friendCount });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+      });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
+});
+app.get("/api/user-stats/:id", async (req, res) => {
+  try {
+    const user_id = req.params.id;
+
+
+    const promise1 = new Promise((resolve, reject) => {
+      db.query(
+        "SELECT COUNT(*) AS commentCount FROM comentarii WHERE user_id = ?",
+        user_id,
+        (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result[0].commentCount);
+          }
+        }
+      );
+    });
+
+    const promise2 = new Promise((resolve, reject) => {
+      db.query(
+        "SELECT COUNT(*) AS photoPostCount FROM postari WHERE user_id = ? AND imagine IS NOT NULL",
+        user_id,
+        (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result[0].photoPostCount);
+          }
+        }
+      );
+    });
+
+    const promise3 = new Promise((resolve, reject) => {
+      db.query(
+        "SELECT COUNT(*) AS friendCount FROM prieteni WHERE (user_id1 = ? OR user_id2 = ?) AND acceptat = 'true'",
+        [user_id, user_id],
+        (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result[0].friendCount);
+          }
+        }
+      );
+    });
+
+    Promise.all([promise1, promise2, promise3])
+      .then((results) => {
+        console.log("results", results);
+        const [commentCount, photoPostCount, friendCount] = results;
+        res.json({ commentCount, photoPostCount, friendCount });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+      });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error signing token" });
+  }
+});
+
 app.post("/api/register", (req, res) => {
   const { email, parola } = req.body;
   const saltRounds = 10;
@@ -941,17 +1071,17 @@ app.delete("/api/remove-friend/:user_id", async (req, res) => {
     const id = decoded.id;
 
     db.query(
-        "DELETE FROM prieteni WHERE (user_id1=? AND user_id2=?) OR (user_id1=? AND user_id2=?)",
-        [id, user_id, user_id, id],
-        (err, result) => {
-          if (err) {
-            console.log(err);
-            res.status(500).json({ error: "Error removing friend" });
-            return;
-          }
-
-          res.status(200).json({ message: "Friend removed successfully" });
+      "DELETE FROM prieteni WHERE (user_id1=? AND user_id2=?) OR (user_id1=? AND user_id2=?)",
+      [id, user_id, user_id, id],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ error: "Error removing friend" });
+          return;
         }
+
+        res.status(200).json({ message: "Friend removed successfully" });
+      }
     );
   } catch (err) {
     console.log(err);

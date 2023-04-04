@@ -19,6 +19,11 @@ export const Account = () => {
     descriere: "",
   });
   const [isFriend, setIsFriend] = useState("");
+  const [stats, setStats] = useState({
+    commentCount: 0,
+    friendCount: 0,
+    photoPostCount: 0,
+  });
   const [posts, setPosts] = useState([
     {
       id: 0,
@@ -63,6 +68,14 @@ export const Account = () => {
         .catch((error) => {
           console.error(error);
         });
+      Axios.get(`http://localhost:3002/api/user-stats/${params.id}`)
+        .then((response) => {
+          console.log("fren", response.data);
+          setStats(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     } else {
       Axios.get("http://localhost:3002/api/profile", {
         headers: {
@@ -84,6 +97,18 @@ export const Account = () => {
         .then((response) => {
           console.log(response.data);
           setPosts(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      Axios.get("http://localhost:3002/api/user-stats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          console.log("setStats", response.data);
+          setStats(response.data);
         })
         .catch((error) => {
           console.error(error);
@@ -254,7 +279,7 @@ export const Account = () => {
                     <div className="flex justify-center py-4 lg:pt-4 pt-8">
                       <div className="mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          22
+                          {stats.friendCount}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Friends
@@ -262,7 +287,7 @@ export const Account = () => {
                       </div>
                       <div className="mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          10
+                          {stats.photoPostCount}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Photos
@@ -270,7 +295,7 @@ export const Account = () => {
                       </div>
                       <div className="lg:mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          89
+                          {stats.commentCount}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Comments
