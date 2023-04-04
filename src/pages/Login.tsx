@@ -39,11 +39,11 @@ const Login = () => {
     }
   }, [emailError, passwordError]);
 
-  // React.useEffect(() => {
-  //   if (localStorage.token) {
-  //     window.location.href = `/acasa`;
-  //   }
-  // }, []);
+  React.useEffect(() => {
+    if (localStorage.token) {
+      window.location.href = `/`;
+    }
+  }, []);
   const handleLogin = () => {
 
     Axios.post("http://localhost:3002/api/login", {

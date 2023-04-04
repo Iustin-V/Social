@@ -6,13 +6,29 @@ import { EditProfile } from "./pages/EditProfile";
 import { Feed } from "./pages/Feed";
 import Login from "./pages/Login";
 import { Register } from "./pages/Register";
-import React from "react";
+import React, { useEffect } from "react";
+import { useJwt } from "react-jwt";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
+  const token = localStorage.getItem("token");
+
+  const { isExpired } = useJwt(token || "");
+  useEffect(() => {
+    if (isExpired) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+  }, [isExpired]);
+
   return (
     <>
-      {localStorage.token && !window.location.href.includes("/create-your-profile") ? <Navigation /> : <></>}
+      {localStorage.token &&
+      !window.location.href.includes("/create-your-profile") ? (
+        <Navigation />
+      ) : (
+        <></>
+      )}
       <BrowserRouter>
         <Routes>
           <Route path={`/`} element={<Feed />} />
