@@ -1,6 +1,6 @@
-export const CreatePost = () => {
+export const CreatePost = (props:{setOpenModal:any}) => {
   return (
-    <div className="p-4  md:w-96 red  ">
+    <div className="p-4  md:w-96 red  " onClick={()=>props.setOpenModal(true)}>
       <div className="p-4 flex relative hover-svg  items-center justify-center border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden hover:bg-red-50  ">
           <div className="absolute inset-y-0 left-6 flex items-center pl-3 pointer-events-none">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

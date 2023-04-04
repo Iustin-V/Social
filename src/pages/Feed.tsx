@@ -2,8 +2,12 @@ import { CreatePost } from "../components/CreatePost";
 import { PostCard } from "../components/PostCard";
 import Axios from "axios";
 import { useEffect, useState } from "react";
+import {CreatePostModal} from "../components/CreatePostModal";
+import {log} from "util";
 
 export const Feed = () => {
+  const [openModal, setOpenModal] = useState(false);
+
   const [posts, setPosts] = useState([
     {
       id: 0,
@@ -88,12 +92,13 @@ export const Feed = () => {
         </div>
         <div className="flex flex-col w-fit md:flex-row">
           <div className="feed-column">
-            <CreatePost />
+            <CreatePost setOpenModal={setOpenModal}/>
 
             {postListEven}
           </div>
           <div className="feed-column">{postListOdd}</div>
         </div>
+        <CreatePostModal open={openModal} setOpened={setOpenModal} confirmHandle={()=>console.log("created")}/>
       </div>
     </>
   );

@@ -44,7 +44,7 @@ export const UploadImage = (props) => {
     <>
       <form onSubmit={handleSubmit}>
         <input
-          id={props.cover ? "poza_cover" : "poza_profil"}
+          id={props.cover ? "poza_cover" : props.post?"image" :"poza_profil"}
           type="file"
           label="Image"
           className="py-5"
@@ -60,7 +60,7 @@ export const UploadImage = (props) => {
         className={
           props.cover
             ? "object-cover h-96 w-full"
-            : "h-24 w-24 text-gray-300 object-cover rounded-full"
+            : props.post ? "w-full object-cover" :"h-24 w-24 text-gray-300 object-cover rounded-full"
         }
         src={
            ((postImage.myFile.length !== 0 && postImage.myFile) || props.usedImage )
