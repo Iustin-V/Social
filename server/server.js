@@ -175,7 +175,7 @@ app.get("/api/chat/friend", async (req, res) => {
 
   const promise1 = new Promise((resolve, reject) => {
     db.query(
-      "SELECT DISTINCT p1.user_id1 AS user_id, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id1 = p2.user_id WHERE p1.user_id2 = ?",
+      "SELECT DISTINCT p1.id ,p1.user_id1 AS user_id,p1.acceptat, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id1 = p2.user_id WHERE p1.user_id2 = ?",
       user_id,
       (err, result) => {
         if (err) {
@@ -192,7 +192,7 @@ app.get("/api/chat/friend", async (req, res) => {
 
   const promise2 = new Promise((resolve, reject) => {
     db.query(
-      "SELECT DISTINCT p1.user_id2 AS user_id, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id2 = p2.user_id WHERE p1.user_id1 = ?",
+      "SELECT DISTINCT p1.id, p1.user_id2 AS user_id, p1.acceptat, p2.nume, p2.prenume, p2.poza_profil FROM prieteni p1 INNER JOIN profil p2 ON p1.user_id2 = p2.user_id WHERE p1.user_id1 = ?",
       user_id,
       (err, result) => {
         if (err) {
