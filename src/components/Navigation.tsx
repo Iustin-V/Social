@@ -24,7 +24,7 @@ export const Navigation = () => {
     {
       id: 0,
       nume: "",
-      acceptat: "false",
+      acceptat: "",
       prenume: "",
       poza_profil: "",
       user_id: 0,
@@ -163,7 +163,10 @@ export const Navigation = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className=" bg-[#e3bbb2] absolute right-0 z-10 mt-2 w-96 origin-top-right border-2 border-red-800 rounded-md  py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Items className=" bg-[#e3bbb2] absolute right-0 z-10 mt-2 width-calculat md:w-96 origin-top-right border-2 border-red-800 rounded-md  py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Item>
+                   <h2 className="px-2 py-1 border-b-2 border-red-800 font-semibold"> {`YOUR FRIEND REQUESTS: (${otherRequestsFriends.filter((element) =>element.acceptat === 'false')?.length || 0})`} </h2>
+                  </Menu.Item>
                     <FriendList notification={true}/>
                   </Menu.Items>
                 </Transition>

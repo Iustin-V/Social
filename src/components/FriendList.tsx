@@ -122,7 +122,7 @@ export const FriendList = (props: {
                 <div>{friend.prenume}</div>
               </div>
             </div>
-            <div>
+            <div className={'flex flex-row items-center'}>
               <button
                 className={"h-10 w-10 hover:scale-125"}
                 onClick={() => handleAccept(friend.id)}
@@ -209,7 +209,7 @@ export const FriendList = (props: {
     if (friend.acceptat === "true") {
       return (
         <Menu as="div" className="relative">
-          <Menu.Button className="flex relative flex-row items-center rounded-3xl w-full gap-2 justify-start bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white ">
+          <Menu.Button className="flex relative flex-row items-center rounded-3xl w-full gap-2 justify-start bg-[#e3bbb2] p-1 hover:cursor-pointer hover:bg-red-800 hover:text-white ">
             <img
               alt={`${friend.nume}${friend.prenume}_poza_profil`}
               src={`data:image/png;base64,${friend.poza_profil}`}

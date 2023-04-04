@@ -105,7 +105,7 @@ export const PostCard = (props: PostCardInterface) => {
         <>
           <button
             onClick={() => setOpenEditModal(true)}
-            className="absolute inset-y-0 top-6 right-32 z-10 hover:bg-red-800 hover:text-white h-fit text-sm flex bg-red-50 rounded-lg items-center p-2 "
+            className="absolute inset-y-0 top-6 right-28 z-10 hover:bg-red-800 hover:text-white h-fit text-sm flex bg-red-50 rounded-lg items-center p-1 "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -125,7 +125,7 @@ export const PostCard = (props: PostCardInterface) => {
           </button>
           <button
             onClick={() => setOpenModal(true)}
-            className="absolute inset-y-0 top-6 right-6 z-10 hover:bg-red-800 hover:text-white h-fit text-sm flex bg-red-50 rounded-lg items-center p-2 "
+            className="absolute inset-y-0 top-6 right-6 z-10 hover:bg-red-800 hover:text-white h-fit text-sm flex bg-red-50 rounded-lg items-center p-1 "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +180,7 @@ export const PostCard = (props: PostCardInterface) => {
             </a>
             <span
               onClick={handleLike}
-              className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200"
+              className="text-gray-400 hover:text-red-800 hover:cursor-pointer mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200"
             >
               <svg
                 className="w-4 h-4 mr-1"

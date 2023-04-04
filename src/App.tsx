@@ -14,11 +14,9 @@ import {PostPage} from "./pages/PostPage";
 function App() {
   const token = localStorage.getItem("token");
 
-  const { isExpired } = useJwt(token || "");
   useEffect(() => {
-    if (isExpired) {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+    if(!window.location.href.includes("/login") && !token){
+      window.location.href='/login'
     }
   }, []);
 

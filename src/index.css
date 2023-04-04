@@ -120,10 +120,17 @@ code {
 }
 .sidebar{
   height: calc(100vh - 64px);
+  animation: leftToRight .5s ease-in;
 }
 @media (max-width: 1220px) {
   .sidebar,.chatWrapper {
     display: none !important;
+  }
+
+}
+@media (max-width: 768px) {
+  .width-calculat{
+    width:calc(100vw - 80px)
   }
 
 }
@@ -148,3 +155,12 @@ code {
     transform: rotateZ(-70deg);
   }
 }
+@keyframes leftToRight {
+  0%{
+    transform: translateX(-100%);
+  }
+  100%{
+    transform: translateX(0);
+  }
+}
+
