@@ -36,27 +36,41 @@ export const FriendList = (props: {
   }, []);
 
   const friendNotifications = friends.map((friend) => {
-    return (
-      <Menu.Item>
-          <div className="flex flex-row items-center gap-2 justify-between bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white ">
+    if (friend.acceptat === "false") {
+      return (
+        <Menu.Item>
+          <div className="flex flex-row items-center gap-2 justify-between bg-[#e3bbb2] p-2  ">
             <div className="flex flex-row items-center gap-2 justify-start">
               <img
-              alt={`${friend.nume}${friend.prenume}_poza_profil`}
-              src={`data:image/png;base64,${friend.poza_profil}`}
-              className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
-            />
-            <div className={"flex flex-row gap-1"}>
-              <div>{friend.nume}</div>
-              <div>{friend.prenume}</div>
+                alt={`${friend.nume}${friend.prenume}_poza_profil`}
+                src={`data:image/png;base64,${friend.poza_profil}`}
+                className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
+              />
+              <div className={"flex flex-row gap-1"}>
+                <div>{friend.nume}</div>
+                <div>{friend.prenume}</div>
+              </div>
+            </div>
+            <div>
+              <button className={"h-10 w-10 hover:scale-125"}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                       stroke="green" className="w-10 h-10">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+              </button>
+              <button className={"h-10 w-10 hover:scale-125"} >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                       stroke="red" className="w-10 h-10">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+              </button>
             </div>
           </div>
-          <div>
-            <button>yes</button>
-            <button>no</button>
-          </div>
-          </div>
-      </Menu.Item>
-    );
+        </Menu.Item>
+      );
+    }
   });
 
   const friendList = friends.map((friend) => {
@@ -83,7 +97,7 @@ export const FriendList = (props: {
   });
   // return <div className="flex flex-col fixed h-screen">{friendList}</div>;
   if (props.notification) {
-    return <>{friendNotifications}</>;
+    return <>{friendNotifications}</>
   }
   return (
     <>
