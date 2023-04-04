@@ -108,6 +108,27 @@ export const Account = () => {
       );
     }
   });
+
+  const handleInviteFriend = (id:number) => {
+    const token = localStorage.getItem("token");
+      Axios.post(
+          "http://localhost:3002/api/create-friend",
+          {},{
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Body: id
+            },
+          }
+      )
+          .then((response) => {
+            console.log("merge");
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    }
+
   return (
     <>
       <link
@@ -171,6 +192,11 @@ export const Account = () => {
                       {params.id && (  <button
                         className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="button"
+                        onClick={()=> {
+                          if(params.id) {
+                            handleInviteFriend(Number(params.id))
+                          }
+                        }}
                       >
                         Connect
                       </button>)}

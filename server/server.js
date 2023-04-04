@@ -254,11 +254,17 @@ app.get("/api/chat/friend", async (req, res) => {
       }
     );
   });
-
   Promise.all([promise1, promise2])
     .then((results) => {
       const mergedResults = results.flat();
-      res.json(mergedResults);
+      const result1=results[0];
+      const result2=results[1];
+      const result={
+        mergedResults:mergedResults,
+        result1:result1,
+        result2:result2,
+      }
+      res.json(result);
     })
     .catch((err) => {
       console.log(err);
@@ -429,6 +435,36 @@ app.post("/api/create-post", async (req, res) => {
   db.query(
     "INSERT INTO postari(user_id,continut,imagine) VALUES(?,?,?)",
     [user_id, continut, binaryImagine],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: "Error fetching user data from database" });
+        return;
+      }
+      if (result.length === 0) {
+        res.status(401).json({ error: "Invalid credentials" });
+        return;
+      }
+
+      res.status(200).json({ message: "Post created successfully" });
+    }
+  );
+});
+app.post("/api/create-friend", async (req, res) => {
+  const id_prieten_nou = req.headers.body;
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  const user_id = decoded.id;
+
+  db.query(
+    "INSERT INTO prieteni(user_id1,user_id2,acceptat) VALUES(?,?,?)",
+    [user_id, id_prieten_nou, 'false'],
     (err, result) => {
       if (err) {
         console.log(err);

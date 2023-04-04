@@ -16,7 +16,26 @@ export const FriendList = (props: {
       user_id: 0,
     },
   ]);
-
+  const [myRequestsFriends, setMyRequestsFriends] = useState([
+    {
+      id: 0,
+      nume: "",
+      acceptat: "false",
+      prenume: "",
+      poza_profil: "",
+      user_id: 0,
+    },
+  ]);
+  const [otherRequestsFriends, setOtherRequestsFriends] = useState([
+    {
+      id: 0,
+      nume: "",
+      acceptat: "false",
+      prenume: "",
+      poza_profil: "",
+      user_id: 0,
+    },
+  ]);
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -27,7 +46,9 @@ export const FriendList = (props: {
     })
       .then((response) => {
         console.log(response.data);
-        setFriends(response.data);
+        setMyRequestsFriends(response.data.result2)
+        setOtherRequestsFriends(response.data.result1)
+        setFriends(response.data.mergedResults);
       })
       .catch((error) => {
         console.error(error);
@@ -61,7 +82,7 @@ export const FriendList = (props: {
       });
   };
 
-  const friendNotifications = friends.map((friend) => {
+  const friendNotifications = otherRequestsFriends.map((friend) => {
     if (friend.acceptat === "false") {
       return (
         <Menu.Item>
