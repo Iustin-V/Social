@@ -109,8 +109,6 @@ app.get("/api/profile", async (req, res) => {
 
     const decoded = await jwt.verify(token, secretKey, options);
 
-    console.log("decoded", decoded.id);
-
     const user_id = decoded.id;
     db.query("SELECT * FROM profil WHERE user_id=?", user_id, (err, result) => {
       if (err) {
@@ -326,8 +324,6 @@ app.post("/api/create-profile", async (req, res) => {
 
   const decoded = await jwt.verify(token, secretKey, options);
 
-  console.log("decoded", decoded.id);
-
   const user_id = decoded.id;
 
   const query = `
@@ -381,7 +377,7 @@ app.post("/api/create-post", async (req, res) => {
   const user_id = decoded.id;
 
   const base64Imagine = imagine.replace(/^data:image\/\w+;base64,/, "");
-  const binaryImagine  = Buffer.from(base64Imagine, "base64");
+  const binaryImagine = Buffer.from(base64Imagine, "base64");
   db.query(
     "INSERT INTO postari(user_id,continut,imagine) VALUES(?,?,?)",
     [user_id, continut, binaryImagine],
@@ -449,6 +445,48 @@ app.put("/api/edit-profile", async (req, res) => {
       descriere,
       user_id,
     ];
+
+    db.query(updateQuery, values, (err, result) => {
+      if (err) {
+        console.error(err);
+        res
+          .status(500)
+          .json({ error: "Error updating profil into the database" });
+        return;
+      }
+
+      res
+        .status(200)
+        .json({ message: "Profil updated successfully", id: user_id });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error updating profil into the database" });
+  }
+});
+
+app.put("/api/edit-post", async (req, res) => {
+  try {
+    const { continut, imagine, id } = req.body;
+
+    const base64Imagine = imagine.replace(/^data:image\/\w+;base64,/, "");
+    const binaryImagine = Buffer.from(base64Imagine, "base64");
+
+    const token = req.headers.authorization.split(" ")[1];
+    const options = { expiresIn: "1h" };
+    const secretKey = "secretkey";
+
+    const decoded = await jwt.verify(token, secretKey, options);
+
+    const user_id = decoded.id;
+
+    const updateQuery = `
+      UPDATE postari
+      SET continut=?, imagine=?
+      WHERE id=? and  user_id = ? 
+    `;
+
+    const values = [continut, binaryImagine, id, user_id];
 
     db.query(updateQuery, values, (err, result) => {
       if (err) {
