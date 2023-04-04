@@ -20,6 +20,16 @@ export const Navigation = () => {
     },
     { name: "Account", href: "/account", current:  window.location.href.includes("account") },
   ])
+  const [otherRequestsFriends, setOtherRequestsFriends] = useState([
+    {
+      id: 0,
+      nume: "",
+      acceptat: "false",
+      prenume: "",
+      poza_profil: "",
+      user_id: 0,
+    },
+  ]);
 
   React.useEffect(() => {
 
@@ -53,7 +63,24 @@ export const Navigation = () => {
       .catch((error) => {
         console.error(error);
       });
+
+
+    Axios.get("http://localhost:3002/api/chat/friend", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+        .then((response) => {
+          console.log(response.data);
+          setOtherRequestsFriends(response.data.result1)
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
   }, []);
+
+
   return (
       <div className={"fixed w-screen z-40"}>
     <Disclosure as="nav" className="red-background ">
@@ -110,9 +137,20 @@ export const Navigation = () => {
                 <div>
                   <Menu.Button className="flex rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="sr-only">View notifications</span>
+                    {otherRequestsFriends.some((element) => element.acceptat === 'false') &&
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2"
+                             stroke="red" className="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+                        </svg>
+                    }
                     <BellIcon
-                        className="h-6 w-6 text-white bg-transparent"
                         aria-hidden="true"
+                        className={classNames(
+                            otherRequestsFriends.some((element) => element.acceptat === 'false')
+                                ? "h-6 w-6 text-yellow-600 bg-transparent animated-ring"
+                                : "h-6 w-6 text-white bg-transparent",
+                        )}
                     />
                   </Menu.Button>
                 </div>
