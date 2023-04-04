@@ -59,7 +59,8 @@ export const Navigation = () => {
       });
   }, []);
   return (
-    <Disclosure as="nav" className="red-background">
+      <div className={"fixed w-screen z-40"}>
+    <Disclosure as="nav" className="red-background ">
       <>
         <div className="mx-auto max-w-7xl px-2 md:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
@@ -212,5 +213,6 @@ export const Navigation = () => {
         </Disclosure.Panel>
       </>
     </Disclosure>
+      </div>
   );
 };
