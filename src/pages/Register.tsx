@@ -81,7 +81,7 @@ export const Register = () => {
       }}
     >
       <div className="flex rounded-3xl overflow-hidden shadow-lg shadow-gray-400 flex-col items-center justify-center lg:flex-row">
-        <div className="flex flex-col justify-center bg-white bg-opacity-50 shadow-[0px_20px_20px_10px_#00000024] h-full pt-6 sm:pt-8 lg:pt-12">
+        <div className="flex flex-col justify-center bg-white bg-opacity-50 h-full pt-6 sm:pt-8 lg:pt-12">
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
             <div className="flex justify-center relative h-16 md:h-40 md:mx-9">
               <img
@@ -101,7 +101,7 @@ export const Register = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white w-full lg:w-fit bg-opacity-50 shadow-[0px_20px_20px_10px_#00000024] pb-6 sm:pt-8 lg:pt-12 min-w-[350px] md:min-w-[574px]">
+        <div className="bg-white w-full lg:w-fit bg-opacity-50 pb-6 sm:pt-8 lg:pt-12 min-w-[350px] md:min-w-[574px]">
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
             <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">
               Register

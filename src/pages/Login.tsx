@@ -91,7 +91,7 @@ const Login = () => {
         <div
           className="flex rounded-3xl overflow-hidden shadow-lg shadow-gray-400 flex-col items-center justify-center lg:flex-row"
         >
-          <div className="shadow-[0px_20px_20px_10px_#00000024] bg-white flex flex-col items-center justify-center h-full bg-opacity-50 pt-6 sm:pt-8 lg:pt-12">
+          <div className=" bg-white flex flex-col items-center justify-center h-full bg-opacity-50 pt-6 sm:pt-8 lg:pt-12">
             <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
               <div className="flex justify-center relative h-16 md:h-40 md:mx-9">
                 <img
@@ -113,7 +113,7 @@ const Login = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white w-full lg:w-fit  shadow-[0px_20px_20px_10px_#00000024] pb-6 sm:pt-8 bg-opacity-50 lg:pt-12 min-w-[350px] md:min-w-[474px]">
+          <div className="bg-white w-full lg:w-fit pb-6 sm:pt-8 bg-opacity-50 lg:pt-12 min-w-[350px] md:min-w-[474px]">
             <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
               <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">
                 Login
