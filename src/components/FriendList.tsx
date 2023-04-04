@@ -183,7 +183,7 @@ export const FriendList = (props: {
     <>
       <div
         id="docs-sidebar"
-        className="hs-overlay pl-2 sidebar hs-overlay-open:translate-x-0 border-0 -translate-x-full transition-all duration-300 transform fixed bottom-0 left-0 z-20 w-52 bg-white pt-7 pb-10 overflow-y-auto scrollbar-y lg:block lg:translate-x-0 lg:right-auto lg:bottom-0 "
+        className="hs-overlay pl-2 sidebar hs-overlay-open:translate-x-0 border-0 -translate-x-full transition-all duration-300 transform fixed bottom-0 left-0 z-[2] w-52 bg-white pt-7 pb-10 overflow-y-auto scrollbar-y lg:block lg:translate-x-0 lg:right-auto lg:bottom-0 "
       >
         <div className="px-3">
           <h2 className="flex-none text-2xl font-semibold text-red-800 pb-3">

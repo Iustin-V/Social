@@ -9,6 +9,7 @@ import { Register } from "./pages/Register";
 import React, { useEffect } from "react";
 import { useJwt } from "react-jwt";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {PostPage} from "./pages/PostPage";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -34,6 +35,7 @@ function App() {
           <Route path={`/`} element={<Feed />} />
           <Route path={`/account`} element={<Account />} />
           <Route path={`/page/user/:id`} element={<Account />} />
+          <Route path={`/post/:id`} element={<PostPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/create-your-profile" element={<CreateProfile />} />
