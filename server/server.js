@@ -224,7 +224,7 @@ app.get("/api/posts/search", (req, res) => {
   const searchTerm = `%${req.headers.body}%`;
 
   db.query(
-    "SELECT postari.id,postari.user_id,continut,data_postarii,imagine,nume,prenume FROM postari,profil WHERE postari.user_id=profil.user_id and postari.continut LIKE ? OR profil.nume LIKE ? OR profil.prenume LIKE ? OR CONCAT(profil.nume, ' ', profil.prenume) LIKE ? OR CONCAT(profil.prenume, ' ', profil.nume) LIKE ?",
+    "SELECT distinct postari.id,postari.user_id,continut,data_postarii,imagine,nume,prenume FROM postari,profil WHERE postari.user_id=profil.user_id and postari.continut LIKE ? OR profil.nume LIKE ? OR profil.prenume LIKE ? OR CONCAT(profil.nume, ' ', profil.prenume) LIKE ? OR CONCAT(profil.prenume, ' ', profil.nume) LIKE ?",
     [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
     (err, result) => {
       if (err) {
@@ -370,6 +370,39 @@ app.post("/api/create-profile", async (req, res) => {
   });
 });
 
+app.post("/api/create-post", async (req, res) => {
+  const { continut, imagine } = req.body;
+  const token = req.headers.authorization.split(" ")[1];
+  const options = { expiresIn: "1h" };
+  const secretKey = "secretkey";
+
+  const decoded = await jwt.verify(token, secretKey, options);
+
+  const user_id = decoded.id;
+
+  const base64Imagine = imagine.replace(/^data:image\/\w+;base64,/, "");
+  const binaryImagine  = Buffer.from(base64Imagine, "base64");
+  db.query(
+    "INSERT INTO postari(user_id,continut,imagine) VALUES(?,?,?)",
+    [user_id, continut, binaryImagine],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: "Error fetching user data from database" });
+        return;
+      }
+      if (result.length === 0) {
+        res.status(401).json({ error: "Invalid credentials" });
+        return;
+      }
+
+      res.status(200).json({ message: "Post created successfully" });
+    }
+  );
+});
+
 app.put("/api/edit-profile", async (req, res) => {
   try {
     const {
@@ -481,7 +514,7 @@ app.delete("/api/delete-account", (req, res) => {
 
 app.delete("/api/delete-post", (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
-  const postId= req.headers.body;
+  const postId = req.headers.body;
   const options = { expiresIn: "1h" };
   const secretKey = "secretkey";
 

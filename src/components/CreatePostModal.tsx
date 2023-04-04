@@ -1,56 +1,73 @@
+import { UploadImage } from "../tools/UploadImage";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import React, { Fragment, useRef, useState } from "react";
-import {UploadImage} from "../tools/UploadImage";
-import {messageValidation} from "../utils/inputsValidation";
+import Axios from "axios";
+import React, { Fragment } from "react";
 
 export const CreatePostModal = (props: {
   open: boolean;
   setOpened: any;
   confirmHandle: any;
 }) => {
-
-  const [postInfo,setPostInfo]=React.useState({
-    description:"",
-    image:""
-  })
+  const [postInfo, setPostInfo] = React.useState({
+    description: "",
+    image: "",
+  });
   const [errorState, setErrorState] = React.useState(false);
-  const handleCreatePost =()=>{
-    console.log("postInfo",postInfo)
-    if(!postInfo.description && !postInfo.image){
-      setErrorState(true)
-    }
-    else {
-      setErrorState(false)
-      setPostInfo({
-        description:"",
-        image:""
-      })
-      props.confirmHandle()
-      props.setOpened(false)
-      console.log("merge")
-    }
-  }
-  React.useEffect(()=>{
-    setErrorState(false)
-    setPostInfo({
-      description:"",
-      image:""
-    })
 
-  },[props.open])
+  const handleCreatePost = () => {
+    const token = localStorage.getItem("token");
+
+    console.log("postInfo", postInfo);
+    if (!postInfo.description && !postInfo.image) {
+      setErrorState(true);
+    } else {
+      setErrorState(false);
+      Axios.post(
+        "http://localhost:3002/api/create-post",
+        {
+          continut: postInfo.description,
+          imagine: postInfo.image || "",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+        .then((response) => {
+          setPostInfo({
+            description: "",
+            image: "",
+          });
+          props.confirmHandle();
+          props.setOpened(false);
+          console.log("merge");
+          window.location.reload()
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+  React.useEffect(() => {
+    setErrorState(false);
+    setPostInfo({
+      description: "",
+      image: "",
+    });
+  }, [props.open]);
   const onChangeHandle = (
-      e: React.ChangeEvent<
-          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-  )=>{
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     if (e.target.id === "description") {
       postInfo.description = e.target.value;
     }
     if (e.target.id === "image") {
       postInfo.image = e.target.value;
     }
-  }
+  };
 
   return (
     <Transition.Root show={props.open} as={Fragment}>
@@ -95,12 +112,12 @@ export const CreatePostModal = (props: {
                         >
                           Description
                         </label>
-                          <p className="mb-2 text-sm leading-6 text-gray-600">
-                              Write your post description here.
-                          </p>
+                        <p className="mb-2 text-sm leading-6 text-gray-600">
+                          Write your post description here.
+                        </p>
                         <div className="mt-2">
                           <textarea
-                              onChange={onChangeHandle}
+                            onChange={onChangeHandle}
                             id="description"
                             name="about"
                             rows={3}
@@ -108,23 +125,27 @@ export const CreatePostModal = (props: {
                           />
                         </div>
                       </div>
-                        <div className="col-span-full w-full">
-                            <label
-                                htmlFor="cover-photo"
-                                className="block text-lg font-medium leading-6 text-gray-900"
-                            >
-                                Photo
-                            </label>
-                            <UploadImage
-                                uploadFunction={onChangeHandle}
-                                post={true}
-                            />
-                        </div>
+                      <div className="col-span-full w-full">
+                        <label
+                          htmlFor="cover-photo"
+                          className="block text-lg font-medium leading-6 text-gray-900"
+                        >
+                          Photo
+                        </label>
+                        <UploadImage
+                          uploadFunction={onChangeHandle}
+                          post={true}
+                        />
+                      </div>
                       <div className={"p-1 h-6"}>
                         {errorState && (
-                            <h2 className={"text-red-500 text-center text-base bg-red-200"}>
-                             You must complete at least one field !
-                            </h2>
+                          <h2
+                            className={
+                              "text-red-500 text-center text-base bg-red-200"
+                            }
+                          >
+                            You must complete at least one field !
+                          </h2>
                         )}
                       </div>
                     </div>
@@ -135,7 +156,7 @@ export const CreatePostModal = (props: {
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-900 sm:ml-3 sm:w-auto"
                     onClick={() => {
-                      handleCreatePost()
+                      handleCreatePost();
                     }}
                   >
                     Create
@@ -146,9 +167,9 @@ export const CreatePostModal = (props: {
                     onClick={() => {
                       setPostInfo({
                         description: "",
-                        image: ""
-                      })
-                      props.setOpened(false)
+                        image: "",
+                      });
+                      props.setOpened(false);
                     }}
                   >
                     Cancel
