@@ -95,3 +95,13 @@ code {
   stroke:#a11b21;
   stroke-width: 2px;
 }
+
+.margin-responsive {
+  margin-top: 128px;
+}
+
+  @media (min-width: 1024px) {
+    .margin-responsive {
+      margin-top: 0px;
+    }
+  }

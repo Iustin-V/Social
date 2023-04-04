@@ -13,11 +13,11 @@ export const Navigation = () => {
   const [navigation,updateNav ]= React.useState([
     {
       name: "Your Feed",
-      href: "",
+      href: "/",
       current: window.location.href === "http://localhost:3000/",
     },
-    { name: "Friends", href: "#", current: window.location.href === "http://localhost:3000/friends" },
-    { name: "Account", href: "#", current: window.location.href === "http://localhost:3000/account" },
+    { name: "Friends", href: "#", current:  window.location.href.includes("friends") },
+    { name: "Account", href: "/account", current:  window.location.href.includes("account") },
   ])
 
   React.useEffect(() => {
@@ -25,18 +25,18 @@ export const Navigation = () => {
    updateNav([
      {
        name: "Your Feed",
-       href: "",
+       href: "/",
        current: window.location.href === "http://localhost:3000/",
      },
      {
        name: "Friends",
        href: "#",
-       current: window.location.href === "http://localhost:3000/friends",
+       current: window.location.href.includes("friends"),
      },
      {
        name: "Account",
-       href: "#",
-       current: window.location.href === "http://localhost:3000/account",
+       href: "/account",
+       current: window.location.href.includes("account"),
      },
    ])
   }, [window.location.href]);
