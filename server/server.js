@@ -507,6 +507,37 @@ app.put("/api/edit-post", async (req, res) => {
   }
 });
 
+app.put("/api/friend/update", async (req, res) => {
+
+  const { prietenieId, stare } = req.body;
+
+  const query = "UPDATE prieteni SET acceptat = ? WHERE id = ?";
+  db.query(query, [stare, prietenieId], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Error updating data in database" });
+      return;
+    }
+    res.status(200).json({ message: "Friendship updated successfully" });
+  });
+});
+app.delete("/api/friend/delete-request", async (req, res) => {
+
+  const prietenieId= req.headers.body;
+
+
+  const query = "DELETE FROM prieteni WHERE id = ?";
+  db.query(query, prietenieId, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Error updating data in database" });
+      return;
+    }
+    res.status(200).json({ message: "Friendship updated successfully" });
+  });
+});
+
+
 app.delete("/api/delete-account", (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const options = { expiresIn: "1h" };

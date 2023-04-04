@@ -4,8 +4,6 @@ import Axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-
-
 export const Account = () => {
   const [profilData, setProfilData] = useState({
     id: 0,
@@ -60,20 +58,35 @@ export const Account = () => {
       });
   }, []);
 
-
-  const postListEven = posts.map((post) => {
-    return (
-      <PostCard
+  const postListImage = posts.map((post) => {
+    if (post.imagine) {
+      return (
+        <PostCard
           id={post.id}
-
           userId={post.userId}
-        content={post.continut}
-        date={post.data_postarii}
-        imagine={post.imagine}
-        nume={post.nume}
-        prenume={post.prenume}
-      />
-    );
+          content={post.continut}
+          date={post.data_postarii}
+          imagine={post.imagine}
+          nume={post.nume}
+          prenume={post.prenume}
+        />
+      );
+    }
+  });
+  const postList = posts.map((post) => {
+    if (!post.imagine) {
+      return (
+        <PostCard
+          id={post.id}
+          userId={post.userId}
+          content={post.continut}
+          date={post.data_postarii}
+          imagine={post.imagine}
+          nume={post.nume}
+          prenume={post.prenume}
+        />
+      );
+    }
   });
   return (
     <>
@@ -144,16 +157,15 @@ export const Account = () => {
                       <button
                         className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="button"
-                        onClick={()=> {
-                        window.location.href="/edit-your-profile"
-                        }
-                        }
+                        onClick={() => {
+                          window.location.href = "/edit-your-profile";
+                        }}
                       >
                         Edit
                       </button>
                       <a
                         className="bg-red-800 hover:bg-red-600 active:bg-red-900 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
-                        href='#posts'
+                        href="#posts"
                       >
                         Posts
                       </a>
@@ -211,7 +223,28 @@ export const Account = () => {
           </div>
         </section>
       </div>
-      <div id={'posts'} className="flex flex-col md:flex-row w-full items-center flex-wrap justify-center pt-1">{postListEven}</div>
+      <div className="text-center mt-12">
+        <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
+          Poze
+        </h3>
+      </div>
+      <div
+        id={"posts"}
+        className="flex flex-col md:flex-row w-full items-center flex-wrap justify-center pt-1"
+      >
+        {postListImage}
+      </div>
+      <div className="text-center mt-12">
+        <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
+          Postari
+        </h3>
+      </div>
+      <div
+        id={"posts"}
+        className="flex flex-col md:flex-row w-full items-center flex-wrap justify-center pt-1"
+      >
+        {postList}
+      </div>
     </>
   );
 };

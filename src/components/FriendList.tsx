@@ -34,6 +34,33 @@ export const FriendList = (props: {
         console.error(error);
       });
   }, []);
+  const handleAccept = (id: number) => {
+    Axios.put("http://localhost:3002/api/friend/update", {
+      prietenieId: id,
+      stare: "true",
+    })
+      .then((response) => {
+        console.log(response.data);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+  const handleReject = (id: number) => {
+    Axios.delete("http://localhost:3002/api/friend/delete-request", {
+      headers: {
+        Body: id,
+      },
+    })
+      .then((response) => {
+        console.log(response.data);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   const friendNotifications = friends.map((friend) => {
     if (friend.acceptat === "false") {
@@ -52,19 +79,43 @@ export const FriendList = (props: {
               </div>
             </div>
             <div>
-              <button className={"h-10 w-10 hover:scale-125"}>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                       stroke="green" className="w-10 h-10">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
+              <button
+                className={"h-10 w-10 hover:scale-125"}
+                onClick={() => handleAccept(friend.id)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="green"
+                  className="w-10 h-10"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
               </button>
-              <button className={"h-10 w-10 hover:scale-125"} >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                       stroke="red" className="w-10 h-10">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
+              <button
+                className={"h-10 w-10 hover:scale-125"}
+                onClick={() => handleReject(friend.id)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="red"
+                  className="w-10 h-10"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
               </button>
             </div>
           </div>
@@ -97,7 +148,7 @@ export const FriendList = (props: {
   });
   // return <div className="flex flex-col fixed h-screen">{friendList}</div>;
   if (props.notification) {
-    return <>{friendNotifications}</>
+    return <>{friendNotifications}</>;
   }
   return (
     <>
