@@ -71,7 +71,7 @@ export const PostPage = () => {
 
   const commentList = comments.map((comment) => {
     return (
-      <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
+      <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 px-2 py-1 antialiased flex max-w-lg">
         <img
           className="rounded-full h-8 w-8 mr-2 mt-1 "
           src={`data:image/png;base64,${comment.poza_profil}`}
@@ -130,7 +130,7 @@ export const PostPage = () => {
   return (
     <div
       className={
-        "fixed flex flex-col items-center border-2 rounded-2xl border-red-800 justify-between w-full max-w-[1280px] px-0 md:px-[32px] py-0 md:py-[64px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:flex-row"
+        "relative md:fixed flex flex-col height-calculat items-center md:border-2 md:rounded-2xl md:border-red-800 justify-between w-full max-w-[1280px] px-0 md:px-[32px] py-0 md:py-[64px] md:left-1/2  top-[64px] md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:flex-row"
       }
     >
       <div className="p-4 relative w-[100%] md:w-[50%]">
@@ -242,15 +242,15 @@ export const PostPage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col max-h-[500px]  items-start justify-center  w-[100%] md:w-[45%] bg-white dark:bg-gray-800">
+      <div className="flex flex-col max-h-[600px]  items-start justify-center  w-[100%] md:w-[45%] bg-white dark:bg-gray-800">
         <div
           className={
-            "flex flex-col w-full max-h-[500px] overflow-y-auto items-start"
+            "flex flex-col w-full max-h-[600px] overflow-y-auto items-start"
           }
         >
           {commentList}
         </div>
-        <div className="flex justify-center items-center w-full">
+        <div className="flex justify-center items-center mt-3 w-full">
           <div className=" px-2 w-full rounded-[12px] bg-white p-3 shadow-md border">
             <p className="text-xl font-semibold text-blue-900 cursor-pointer transition-all hover:text-black">
               Add Comment

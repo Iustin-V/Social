@@ -36,6 +36,14 @@ export const FriendList = (props: {
       user_id: 0,
     },
   ]);
+  const [suggestions, setSuggestions] = useState([
+    {
+      id: 0,
+      nume: "",
+      prenume: "",
+      poza_profil: ""
+    },
+  ]);
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -53,6 +61,20 @@ export const FriendList = (props: {
       .catch((error) => {
         console.error(error);
       });
+
+    Axios.get("http://localhost:3002/api/users/all", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        console.log("response.data",response.data)
+        setSuggestions(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
   }, []);
   const handleAccept = (id: number) => {
     Axios.put("http://localhost:3002/api/friend/update", {
@@ -196,7 +218,47 @@ export const FriendList = (props: {
       );
     }
   });
-  // return <div className="flex flex-col fixed h-screen">{friendList}</div>;
+  const suggestionsList =suggestions.map((suggestion) => {
+      return (
+        <Menu as="div" className="relative">
+          <Menu.Button className="flex relative flex-row items-center rounded-3xl w-full gap-2 justify-start bg-[#e3bbb2] p-2 hover:cursor-pointer hover:bg-red-800 hover:text-white ">
+            <img
+              alt={`${suggestion.nume}${suggestion.prenume}_poza_profil`}
+              src={`data:image/png;base64,${suggestion.poza_profil}`}
+              className="shadow-xl rounded-full  h-10 w-10 object-cover  border-none   max-w-150-px"
+            />
+            <div className={"flex flex-row gap-1"}>
+              <div>{suggestion.nume}</div>
+              <div>{suggestion.prenume}</div>
+            </div>
+          </Menu.Button>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className={"flex flex-row justify-center items-center -translate-y-1/4 w-full gap-2" }>
+              <Menu.Item>
+                <button
+                    className={"w-fit px-2 py-1 bg-red-800 text-white rounded-2xl bg-opacity-70 border-2 border-black hover:bg-opacity-100" }
+
+                  onClick={() =>
+                    (window.location.href = `/page/user/${suggestion.id}`)
+                  }
+                >
+                  Profile
+                </button>
+              </Menu.Item>
+            </Menu.Items>
+          </Transition>
+        </Menu>
+      );
+  });
+
   if (props.notification) {
     return <>{friendNotifications}</>;
   }
@@ -208,11 +270,19 @@ export const FriendList = (props: {
       >
         <div className="px-3">
           <h2 className="flex-none text-2xl font-semibold text-red-800 pb-3">
-            Friends
+            Friends:
           </h2>
         </div>
         <div className="hs-accordion-group w-full flex flex-col flex-wrap">
           <ul className="space-y-1.5 flex flex-col gap-2">{friendList}</ul>
+        </div>
+        <div className="px-3 mt-3">
+          <h2 className="flex-none text-2xl font-semibold text-red-800 pb-3">
+            Suggestions:
+          </h2>
+        </div>
+        <div className="hs-accordion-group w-full flex flex-col flex-wrap">
+          <ul className="space-y-1.5 flex flex-col gap-2">{suggestionsList}</ul>
         </div>
       </div>
     </>

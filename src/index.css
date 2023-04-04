@@ -105,6 +105,9 @@ code {
     margin-top: 0px;
   }
 
+  .height-calculat{
+    height: calc(100vh - 172px);
+  }
 }
 .chat{
   position: fixed;
@@ -118,7 +121,6 @@ code {
 .sidebar{
   height: calc(100vh - 64px);
 }
-
 @media (max-width: 1220px) {
   .sidebar {
     display: none !important;
