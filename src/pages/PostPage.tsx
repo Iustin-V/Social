@@ -1,28 +1,132 @@
 import ConfirmationModal from "../components/ConfirmationModal";
 import { CreatePostModal } from "../components/CreatePostModal";
-import React, { useState } from "react";
+import Axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useJwt } from "react-jwt";
+import { useParams } from "react-router-dom";
 
 export const PostPage = () => {
   const token = localStorage.getItem("token");
-  const mock = {
-    content: "Sunt la facultate",
-    date: "2023-04-04T15:59:10.000Z",
-    id: 26,
-    imagine: "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAA",
-    nume: "Vasiliu",
-    prenume: "Iustin",
-    userId: 33,
-  };
+
   const { decodedToken, isExpired } = useJwt(token || "");
   // @ts-ignore
   const loggedInUserId = decodedToken?.id;
-  console.log(loggedInUserId, mock.userId);
 
   const [openModal, setOpenModal] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const src = "data:image/png;base64," + mock.imagine;
+  const [refresh, setRefresh] = useState(false);
+  const [numberOfComments, setNumberOfComments] = useState(0);
 
+  const [comment, setComment] = useState("");
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [post, setPost] = useState({
+    id: 0,
+    user_id: 0,
+    continut: "",
+    data_postarii: "",
+    imagine: "",
+    nume: "",
+    prenume: "",
+  });
+  const [comments, setComments] = useState([
+    {
+      id: 0,
+      user_id: 0,
+      post_id: 0,
+      continut: "",
+      nume: "",
+      prenume: "",
+      poza_profil: "",
+    },
+  ]);
+  const src = "data:image/png;base64," + post.imagine;
+  let params = useParams();
+  useEffect(() => {
+    if (params.id) {
+      Axios.get(`http://localhost:3002/api/posts/${params.id}`)
+        .then((data) => {
+          setPost(data.data[0]);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      Axios.get(`http://localhost:3002/api/comments/${params.id}`)
+        .then((data) => {
+          console.log(data.data);
+          setComments(data.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      Axios.get(`http://localhost:3002/api/comments/count/${params.id}`)
+        .then((data) => {
+          console.log("nbcom", data.data);
+          setNumberOfComments(data.data.count);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [refresh]);
+
+  const commentList = comments.map((comment) => {
+    return (
+      <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
+        <img
+          className="rounded-full h-8 w-8 mr-2 mt-1 "
+          src={`data:image/png;base64,${comment.poza_profil}`}
+        />
+        <div>
+          <div className="bg-gray-100 dark:bg-gray-700 rounded-3xl px-4 pt-2 pb-2.5">
+            <div className="font-semibold text-sm leading-relaxed">
+              {comment.nume} {comment.prenume}
+            </div>
+            <div className="text-normal leading-snug md:leading-normal">
+              {comment.continut}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  });
+  const handleSubmit = () => {
+    const token = localStorage.getItem("token");
+
+    Axios.post(
+      "http://localhost:3002/api/post/create-comment",
+      {
+        post_id: params.id,
+        continut: comment,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        setRefresh(!refresh);
+        setComment("");
+        console.log("merge");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const handleDelete = () => {
+    Axios.delete("http://localhost:3002/api/delete-post", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Body: `${params.id}`,
+      },
+    })
+      .then((response) => {
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div
       className={
@@ -34,8 +138,8 @@ export const PostPage = () => {
           open={openEditModal}
           setOpened={setOpenEditModal}
           isEdit={true}
-          modelData={{ description: mock.content, image: mock.imagine }}
-          id={mock.id}
+          modelData={{ description: post.continut, image: post.imagine }}
+          id={post.id}
           confirmHandle={() => {
             console.log("merge");
           }}
@@ -43,9 +147,9 @@ export const PostPage = () => {
         <ConfirmationModal
           open={openModal}
           setOpened={setOpenModal}
-          confirmHandle={() => console.log("fdasf")}
+          confirmHandle={handleDelete}
         />
-        {loggedInUserId === mock.userId && (
+        {loggedInUserId === post.user_id && (
           <>
             <button
               onClick={() => setOpenEditModal(true)}
@@ -90,7 +194,7 @@ export const PostPage = () => {
           </>
         )}
         <div className="h-full relative  border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-          {mock.imagine && (
+          {post.imagine && (
             <img
               className=" w-full object-cover object-center"
               src={src}
@@ -99,10 +203,10 @@ export const PostPage = () => {
           )}
           <div className="p-6">
             <p className="leading-relaxed  text-xl font-bold">
-              {mock.nume} {mock.prenume}
+              {post.nume} {post.prenume}
             </p>
 
-            <p className="leading-relaxed mb-3">{mock.content}</p>
+            <p className="leading-relaxed mb-3">{post.continut}</p>
             <div className="flex items-center flex-wrap ">
               <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
                 <svg
@@ -131,124 +235,41 @@ export const PostPage = () => {
                 >
                   <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
                 </svg>
-                6
+                {numberOfComments}
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col max-h-[500px] overflow-y-auto items-center justify-center  w-[100%] md:w-[45%] bg-white dark:bg-gray-800">
-        <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
-          <img
-            className="rounded-full h-8 w-8 mr-2 mt-1 "
-            src="https://picsum.photos/id/1027/200/200"
-          />
-          <div>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-3xl px-4 pt-2 pb-2.5">
-              <div className="font-semibold text-sm leading-relaxed">
-                Jon Doe
-              </div>
-              <div className="text-normal leading-snug md:leading-normal">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua
-              </div>
-            </div>
-          </div>
+      <div className="flex flex-col max-h-[500px]  items-start justify-center  w-[100%] md:w-[45%] bg-white dark:bg-gray-800">
+        <div
+          className={
+            "flex flex-col w-full max-h-[500px] overflow-y-auto items-start"
+          }
+        >
+          {commentList}
         </div>
-        <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
-          <img
-            className="rounded-full h-8 w-8 mr-2 mt-1 "
-            src="https://picsum.photos/id/1027/200/200"
-          />
-          <div>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-3xl px-4 pt-2 pb-2.5">
-              <div className="font-semibold text-sm leading-relaxed">
-                Jon Doe
-              </div>
-              <div className="text-normal leading-snug md:leading-normal"> Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
-          <img
-            className="rounded-full h-8 w-8 mr-2 mt-1 "
-            src="https://picsum.photos/id/1027/200/200"
-          />
-          <div>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-3xl px-4 pt-2 pb-2.5">
-              <div className="font-semibold text-sm leading-relaxed">
-                Jon Doe
-              </div>
-              <div className="text-normal leading-snug md:leading-normal"> Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
-          <img
-            className="rounded-full h-8 w-8 mr-2 mt-1 "
-            src="https://picsum.photos/id/1027/200/200"
-          />
-          <div>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-3xl px-4 pt-2 pb-2.5">
-              <div className="font-semibold text-sm leading-relaxed">
-                Jon Doe
-              </div>
-              <div className="text-normal leading-snug md:leading-normal"> Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
-          <img
-            className="rounded-full h-8 w-8 mr-2 mt-1 "
-            src="https://picsum.photos/id/1027/200/200"
-          />
-          <div>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-3xl px-4 pt-2 pb-2.5">
-              <div className="font-semibold text-sm leading-relaxed">
-                Jon Doe
-              </div>
-              <div className="text-normal leading-snug md:leading-normal"> Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
-          <img
-            className="rounded-full h-8 w-8 mr-2 mt-1 "
-            src="https://picsum.photos/id/1027/200/200"
-          />
-          <div>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-3xl px-4 pt-2 pb-2.5">
-              <div className="font-semibold text-sm leading-relaxed">
-                Jon Doe
-              </div>
-              <div className="text-normal leading-snug md:leading-normal"> Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-4 antialiased flex max-w-lg">
-          <img
-            className="rounded-full h-8 w-8 mr-2 mt-1 "
-            src="https://picsum.photos/id/1027/200/200"
-          />
-          <div>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-3xl px-4 pt-2 pb-2.5">
-              <div className="font-semibold text-sm leading-relaxed">
-                Jon Doe
-              </div>
-              <div className="text-normal leading-snug md:leading-normal"> Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
+        <div className="flex justify-center items-center w-full">
+          <div className=" px-2 w-full rounded-[12px] bg-white p-3 shadow-md border">
+            <p className="text-xl font-semibold text-blue-900 cursor-pointer transition-all hover:text-black">
+              Add Comment
+            </p>
+            <textarea
+              id="continut"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="h-10 px-3 text-sm py-1 mt-5 outline-none border-gray-300 w-full resize-none border rounded-lg placeholder:text-sm"
+              placeholder="Add your comments here"
+            />
+
+            <div className="flex justify-between mt-2">
+              <button
+                onClick={handleSubmit}
+                className="h-8 w-[150px] bg-blue-400 text-sm text-white rounded-lg transition-all cursor-pointer hover:bg-blue-600"
+              >
+                Submit comment
+              </button>
             </div>
           </div>
         </div>
