@@ -101,7 +101,7 @@ export const PostPage = () => {
     return (
       <div className="bg-white dark:bg-gray-800 text-black dark:text-gray-200 px-2 py-1 antialiased flex max-w-lg">
         <img
-          className="rounded-full h-8 w-8 mr-2 mt-1 "
+          className="rounded-full h-8 w-8 mr-2 mt-1 object-cover "
           src={`data:image/png;base64,${comment.poza_profil}`}
         />
         <div>
