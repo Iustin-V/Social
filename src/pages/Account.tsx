@@ -326,7 +326,7 @@ export const Account = () => {
           </div>
         </section>
       </div>
-      {postListImage.filter((element)=>element !==undefined).length > 1 && (
+      {postListImage.filter((element)=>element !==undefined).length > 0 && (
         <>
           <div className="text-center mt-12">
             <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
@@ -341,7 +341,7 @@ export const Account = () => {
           </div>
         </>
       )}
-      {postList.filter((element)=>element !==undefined).length > 1 && (
+      {postList.filter((element)=>element !==undefined).length > 0 && (
         <>
           <div className="text-center mt-12">
             <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">

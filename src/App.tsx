@@ -15,7 +15,7 @@ function App() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if(!window.location.href.includes("/login") && !token){
+    if(!window.location.href.includes("/login") && !window.location.href.includes("/register")  && !token){
       window.location.href='/login'
     }
   }, []);
