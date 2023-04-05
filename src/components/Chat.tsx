@@ -62,7 +62,6 @@ export const Chat = (props: ChatInterface) => {
     })
       .then((response) => {
         props.setChatData(response.data);
-        props.setOpenChat(true);
         console.log("conv", response.data);
       })
       .catch((error) => {
@@ -96,27 +95,27 @@ export const Chat = (props: ChatInterface) => {
 
   const handleSubmit = () => {
     const token = localStorage.getItem("token");
-
-    Axios.post(
-      "http://localhost:3002/api/messages",
-      {
-        chat_id: props.chatData.conversation.id,
-        content: comment,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-      .then((response) => {
-        // setRefresh(!refresh);
-        setComment("");
-        setLocalRefresh(!localRefresj);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    //
+    // Axios.post(
+    //   "http://localhost:3002/api/messages",
+    //   {
+    //     chat_id: props.chatData.conversation.id,
+    //     content: comment,
+    //   },
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   }
+    // )
+    //   .then((response) => {
+    //     // setRefresh(!refresh);
+    //     setComment("");
+    //     setLocalRefresh(!localRefresj);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
   return (
     <>

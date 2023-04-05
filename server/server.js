@@ -43,7 +43,7 @@ app.get("/api/users/all", async (req, res) => {
 
   const user_id = decoded.id;
   db.query(
-    "SELECT users.id, profil.nume, profil.prenume, profil.poza_profil FROM users JOIN profil ON users.id = profil.user_id WHERE users.id NOT IN ( SELECT CASE WHEN user_id1 = ? THEN user_id2 ELSE user_id1 END AS friend_id FROM prieteni WHERE acceptat='false' AND user_id1 = ? OR user_id2 = ? ) AND users.id <> ?",
+    "SELECT users.id, profil.nume, profil.prenume, profil.poza_profil FROM users JOIN profil ON users.id = profil.user_id WHERE users.id NOT IN ( SELECT CASE WHEN user_id1 = ? THEN user_id2 ELSE user_id1 END AS friend_id FROM prieteni WHERE acceptat='true' AND user_id1 = ? OR user_id2 = ? ) AND users.id <> ?",
     [user_id, user_id, user_id, user_id],
     (err, result) => {
       if (err) {

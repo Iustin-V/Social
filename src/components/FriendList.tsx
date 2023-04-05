@@ -329,14 +329,22 @@ export const FriendList = (props: {
         <div className="hs-accordion-group w-full flex flex-col flex-wrap">
           <ul className="space-y-1.5 flex flex-col gap-2">{friendList}</ul>
         </div>
-        <div className="px-3 mt-3">
-          <h2 className="flex-none text-2xl font-semibold text-red-800 pb-3">
-            Suggestions:
-          </h2>
-        </div>
-        <div className="hs-accordion-group w-full flex flex-col flex-wrap">
-          <ul className="space-y-1.5 flex flex-col gap-2">{suggestionsList}</ul>
-        </div>
+        {suggestions[0]?.nume ? (
+          <>
+            <div className="px-3 mt-3">
+              <h2 className="flex-none text-2xl font-semibold text-red-800 pb-3">
+                Suggestions:
+              </h2>
+            </div>
+            <div className="hs-accordion-group w-full flex flex-col flex-wrap">
+              <ul className="space-y-1.5 flex flex-col gap-2">
+                {suggestionsList}
+              </ul>
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );
