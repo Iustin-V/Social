@@ -614,8 +614,8 @@ app.get("/api/conversations/:user_id1", async (req, res) => {
         const conversation_id = conversation[0]?.id;
 
         db.query(
-          "SELECT mesaje.*, profil.nume, profil.prenume, profil.poza_profil FROM mesaje JOIN profil ON mesaje.sender_id = profil.user_id WHERE mesaje.chat_id = ? ",
-          conversation_id,
+          "SELECT mesaje.*, profil.nume, profil.prenume, profil.poza_profil FROM mesaje JOIN profil ON mesaje.sender_id = profil.user_id WHERE mesaje.chat_id = ?",
+          [conversation_id],
           (err, messages) => {
             if (err) {
               console.log(err);
