@@ -6,8 +6,8 @@ export const FriendList = (props: {
   setChatData?: any;
   notification?: boolean;
   refresh?: boolean;
-  openChat?:boolean
-  setOpenChat?:any
+  openChat?: boolean;
+  setOpenChat?: any;
 }) => {
   const [friends, setFriends] = useState([
     {
@@ -122,7 +122,7 @@ export const FriendList = (props: {
                 <div>{friend.prenume}</div>
               </div>
             </div>
-            <div className={'flex flex-row items-center'}>
+            <div className={"flex flex-row items-center"}>
               <button
                 className={"h-10 w-10 hover:scale-125"}
                 onClick={() => handleAccept(friend.id)}
@@ -197,7 +197,8 @@ export const FriendList = (props: {
     })
       .then((response) => {
         props.setChatData(response.data);
-        props.setOpenChat(true)
+        props.setOpenChat(true);
+        localStorage.setItem("friendID", String(friendID));
         console.log("conv", response.data);
       })
       .catch((error) => {

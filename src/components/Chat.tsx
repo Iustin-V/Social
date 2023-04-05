@@ -22,23 +22,25 @@ interface ChatInterface {
       }
     ];
   };
-  setRefresh?:any
-    openChat?:boolean
-    setOpenChat?:any
+  setRefresh?: any;
+  openChat?: boolean;
+  setOpenChat?: any;
+  setChatData?: any;
 }
 export const Chat = (props: ChatInterface) => {
   const [comment, setComment] = useState("");
+  const [localRefresj, setLocalRefresh] = useState(false);
 
   const useChatScroll = (
     dep: {
-        chat_id: number;
-        content: string;
-        created_at: string;
-        id: number;
-        nume: string;
-        poza_profil: "";
-        prenume: string;
-        sender_id: number;
+      chat_id: number;
+      content: string;
+      created_at: string;
+      id: number;
+      nume: string;
+      poza_profil: "";
+      prenume: string;
+      sender_id: number;
     }[]
   ) => {
     const ref = React.useRef<HTMLDivElement>();
@@ -49,6 +51,24 @@ export const Chat = (props: ChatInterface) => {
     }, [dep]);
     return ref;
   };
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    const friendID = localStorage.getItem("friendID");
+
+    Axios.get(`http://localhost:3002/api/conversations/${friendID}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        props.setChatData(response.data);
+        props.setOpenChat(true);
+        console.log("conv", response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [localRefresj]);
   const ref = useChatScroll(props?.chatData?.messages);
   useEffect(() => {
     console.log(props?.chatData?.messages);
@@ -92,58 +112,71 @@ export const Chat = (props: ChatInterface) => {
       .then((response) => {
         // setRefresh(!refresh);
         setComment("");
-        console.log("merge");
+        setLocalRefresh(!localRefresj);
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  return (<>
-      { props.openChat &&
-    <div
-        className={
-            "chatWrapper md:flex flex-col rounded-t-2xl overflow-hidden justify-end z-[60] bg-[#e3bbb2] border-4 border-red-900  w-[400px] h-[500px] items-start fixed right-[60px] bottom-0"
-        }
-    >
-        <button
-            onClick={() => props.setOpenChat(false)
-            } className={"absolute top-2 right-8 "}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                 stroke="darkred" className="w-8 h-8 hover:stroke-red-700">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-
-        </button>
+  return (
+    <>
+      {props.openChat && (
         <div
+          className={
+            "chatWrapper md:flex flex-col rounded-t-2xl overflow-hidden justify-end z-[60] bg-[#e3bbb2] border-4 border-red-900  w-[400px] h-[500px] items-start fixed right-[60px] bottom-0"
+          }
+        >
+          <button
+            onClick={() => {
+              props.setOpenChat(false)
+              localStorage.removeItem('friendID')
+            }}
+            className={"absolute top-2 right-8 "}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2.5"
+              stroke="darkred"
+              className="w-8 h-8 hover:stroke-red-700"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
+          <div
             className={"overflow-y-auto w-full"}
             //@ts-ignore
             ref={ref}
-        >
+          >
             {messagetList}
-        </div>
-        <div className="flex justify-center items-center w-full">
+          </div>
+          <div className="flex justify-center items-center w-full">
             <div className=" px-2 w-full bg-white p-1 shadow-md border">
-          <textarea
-              id="continut"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              className="h-10 px-3 text-sm py-1 mt-2 outline-none border-gray-300 w-full resize-none border rounded-lg placeholder:text-sm"
-              placeholder="Type your message"
+              <textarea
+                id="continut"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="h-10 px-3 text-sm py-1 mt-2 outline-none border-gray-300 w-full resize-none border rounded-lg placeholder:text-sm"
+                placeholder="Type your message"
+              />
 
-          />
-
-                <div className="flex justify-between mt-1">
-                    <button
-                        onClick={handleSubmit}
-                        className="h-8 w-[150px] bg-red-900 hover:bg-red-700 text-sm text-white rounded-lg transition-all cursor-pointer hover:bg-blue-600"
-                    >
-                        Send
-                    </button>
-                </div>
+              <div className="flex justify-between mt-1">
+                <button
+                  onClick={handleSubmit}
+                  className="h-8 w-[150px] bg-red-900 hover:bg-red-700 text-sm text-white rounded-lg transition-all cursor-pointer hover:bg-blue-600"
+                >
+                  Send
+                </button>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
-}
-  </>);
+      )}
+    </>
+  );
 };
