@@ -405,6 +405,25 @@ app.get("/api/likes/count/:id", (req, res) => {
     res.json({ count });
   });
 });
+app.get("/api/conversations/get/:id", (req, res) => {
+  const chatId = req.params.id;
+  db.query(
+    "SELECT mesaje.*, profil.nume, profil.prenume, profil.poza_profil FROM mesaje JOIN profil ON mesaje.sender_id = profil.user_id WHERE mesaje.chat_id = ? ",
+    chatId,
+    (err, messages) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: "Error fetching data from database" });
+        return;
+      }
+      messages.forEach((post) => {
+        post.poza_profil = Buffer.from(post.poza_profil).toString("base64");
+      });
+
+      res.json({ conversation: conversation[0], messages });
+    }
+  );
+});
 
 app.get("/api/friends/check/:id", async (req, res) => {
   try {
@@ -592,7 +611,7 @@ app.get("/api/conversations/:user_id1", async (req, res) => {
           res.status(500).json({ error: "Error fetching data from database" });
           return;
         }
-        const conversation_id = conversation[0].id;
+        const conversation_id = conversation[0]?.id;
 
         db.query(
           "SELECT mesaje.*, profil.nume, profil.prenume, profil.poza_profil FROM mesaje JOIN profil ON mesaje.sender_id = profil.user_id WHERE mesaje.chat_id = ? ",
@@ -605,10 +624,11 @@ app.get("/api/conversations/:user_id1", async (req, res) => {
                 .json({ error: "Error fetching data from database" });
               return;
             }
-              messages.forEach((post) => {
-                  post.poza_profil = Buffer.from(post.poza_profil).toString("base64");
-              });
-
+            messages.forEach((post) => {
+              post.poza_profil = Buffer.from(post.poza_profil).toString(
+                "base64"
+              );
+            });
 
             res.json({ conversation: conversation[0], messages });
           }
@@ -882,7 +902,7 @@ app.post("/api/conversations", async (req, res) => {
   // Verificăm dacă există deja o conversație între cei doi utilizatori
   db.query(
     "SELECT * FROM conversatie WHERE (user_id2 = ? AND user_id1 = ?) OR (user_id1 = ? AND user_id2 = ?)",
-    [user_id1, user_id2, user_id2, user_id1],
+    [user_id1, user_id2, user_id1, user_id2],
     (err, result) => {
       if (err) {
         console.log(err);

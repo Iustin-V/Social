@@ -78,10 +78,24 @@ export const Feed = () => {
       {localStorage.token ? (
         <>
           {
-            //@ts-ignore
-              chatData && <Chat openChat={openChat} setOpenChat={setOpenChat} chatData={chatData} setRefresh={setRefresh}/>
+            chatData && (
+              <Chat
+                openChat={openChat}
+                setOpenChat={setOpenChat}
+                  //@ts-ignore
+
+                chatData={chatData}
+                setChatData={setChatData}
+                setRefresh={setRefresh}
+              />
+            )
           }
-          <FriendList openChat={openChat} setOpenChat={setOpenChat} setChatData={setChatData} refresh={refresh} />
+          <FriendList
+            openChat={openChat}
+            setOpenChat={setOpenChat}
+            setChatData={setChatData}
+            refresh={refresh}
+          />
           <div className="feed-wrapper">
             <div className={"max-w-[500px] w-full relative px-6"}>
               <div className="absolute inset-y-0 left-6 flex items-center pl-3 pointer-events-none">
